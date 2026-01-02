@@ -1,0 +1,25 @@
+---
+alwaysApply: true
+---
+
+```
+don't write asChild in Button
+like this:
+<Button asChild>
+  <Link href="/dashboard">
+    Dashboard
+  </Link>
+</Button>
+
+but write this:
+<Button>
+  <Link href="/dashboard">
+    Dashboard
+  </Link>
+</Button> insted write like this:
+<Button>
+  <Link href="/dashboard">
+    Dashboard
+  </Link>
+</Button>
+```
