@@ -1,15 +1,17 @@
 "use client"
 import { Button } from "../ui/button";
-import { TrendingUp, Menu, X } from "lucide-react";
+import { Menu, X } from "lucide-react";
 import { useState, useEffect } from "react";
-import { usePathname } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
 import { cn } from "@/lib/utils";
 import Link from "next/link";
+import Image from "next/image";
 import { useConvexAuth } from "convex/react";
 import { useAuthActions } from "@convex-dev/auth/react";
 
 export function Navbar() {
   const pathname = usePathname();
+  const router = useRouter();
   const isAuthPage = pathname === "/auth";
   const { isAuthenticated, isLoading } = useConvexAuth();
   const { signOut } = useAuthActions();
@@ -25,6 +27,11 @@ export function Navbar() {
       window.removeEventListener("scroll", handleScroll);
   }, []);
 
+  const handleSignOut = async () => {
+    await signOut();
+    router.push("/");
+  };
+
   return (
     <header>
       <nav
@@ -32,22 +39,20 @@ export function Navbar() {
         className={cn(
           "fixed z-20 w-full transition-all duration-300",
           isScrolled &&
-            "bg-background/75 border-b border-black/5 backdrop-blur-lg",
+          "bg-background/75 border-b border-black/5 backdrop-blur-lg",
         )}
       >
         <div className="mx-auto px-6 max-w-10/12">
           <div className="relative flex flex-wrap items-center justify-between gap-6 py-3 lg:gap-0">
             <div className="flex w-full justify-between gap-6 lg:w-auto">
               <Link
-                    href="/"
-                    aria-label="home"
-                    className="flex items-center space-x-2"
+                href="/"
+                aria-label="home"
+                className="flex items-center space-x-2"
               >
-                <div className="h-8 w-8 rounded-lg bg-primary flex items-center justify-center">
-                  <TrendingUp className="h-5 w-5 text-primary-foreground" />
-                </div>
+                <Image src="/logo.svg" alt="Tracko" width={32} height={32} />
                 <span className="font-bold text-xl">
-                  Portfolio Tracker
+                  Tracko
                 </span>
               </Link>
 
@@ -73,7 +78,15 @@ export function Navbar() {
                     <>
                       <Button
                         size="lg"
-                        onClick={() => void signOut()}
+                        variant="outline"
+                      >
+                        <Link href="/dashboard">
+                          Dashboard
+                        </Link>
+                      </Button>
+                      <Button
+                        size="lg"
+                        onClick={handleSignOut}
                       >
                         Sign Out
                       </Button>

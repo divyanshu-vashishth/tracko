@@ -1,7 +1,7 @@
 import { defineSchema, defineTable } from "convex/server";
 import { authTables } from "@convex-dev/auth/server";
 import { v } from "convex/values";
- 
+
 const schema = defineSchema({
   ...authTables,
   // Your other tables...
@@ -24,12 +24,13 @@ const schema = defineSchema({
     totalValue: v.optional(v.number()), // Total value of holding (shares * currentPrice)
     sector: v.optional(v.string()), // Stock sector (Technology, Healthcare, etc.)
     currency: v.optional(v.string()), // Currency (e.g., "USD", "INR")
+    purchaseDate: v.optional(v.number()), // Date when stock was purchased (Unix timestamp)
     createdAt: v.number(),
     updatedAt: v.number(),
   })
-  .index("by_portfolio", ["portfolioId"])
-  .index("by_user", ["userId"])
-  .index("by_symbol", ["symbol"]),
+    .index("by_portfolio", ["portfolioId"])
+    .index("by_user", ["userId"])
+    .index("by_symbol", ["symbol"]),
   transactions: defineTable({
     portfolioId: v.id("portfolios"),
     userId: v.id("users"),
@@ -100,5 +101,5 @@ const schema = defineSchema({
     createdAt: v.number(),
   }).index("by_user", ["userId"]),
 });
- 
+
 export default schema;

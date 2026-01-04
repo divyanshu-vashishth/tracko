@@ -36,15 +36,21 @@ interface Holding {
 export function PortfolioOverview() {
   const holdings = useQuery(api.portfolios.getHoldings) || [];
   const getQuotes = useAction(api.stocks.getQuotes);
+  const getExchangeRates = useAction(api.exchangeRates.getExchangeRates);
   const deleteHolding = useMutation(api.portfolios.deleteHolding);
 
   const [livePrices, setLivePrices] = useState<Record<string, number>>({});
+  const [exchangeRates, setExchangeRates] = useState<Record<string, number>>({});
   const [isAddOpen, setIsAddOpen] = useState(false);
   const [editingHolding, setEditingHolding] = useState<Holding | null>(null);
   const [holdingToDelete, setHoldingToDelete] = useState<Id<"holdings"> | null>(null);
 
+  // Display currency - all totals will be shown in this currency
+  const displayCurrency: string = "INR";
+
   // Import state
   const [isImportOpen, setIsImportOpen] = useState(false);
+  const [isCsvImportOpen, setIsCsvImportOpen] = useState(false);
 
   // Fetch live prices
   useEffect(() => {
@@ -62,6 +68,27 @@ export function PortfolioOverview() {
     }
   }, [holdings.length]); // eslint-disable-line react-hooks/exhaustive-deps
 
+  // Fetch exchange rates for currency conversion
+  useEffect(() => {
+    getExchangeRates({ baseCurrency: displayCurrency }).then(rates => {
+      setExchangeRates(rates);
+    });
+  }, [displayCurrency]); // eslint-disable-line react-hooks/exhaustive-deps
+
+  // Helper to convert to display currency
+  const toDisplayCurrency = (amount: number, fromCurrency: string = "INR"): number => {
+    if (fromCurrency === displayCurrency) return amount;
+    // If we have the rate (display currency to holding currency), we need to invert it
+    const rate = exchangeRates[fromCurrency];
+    if (rate) {
+      return amount / rate; // Convert foreign currency to display currency
+    }
+    // Fallback rates
+    if (fromCurrency === "USD" && displayCurrency === "INR") return amount * 83.5;
+    if (fromCurrency === "INR" && displayCurrency === "USD") return amount * 0.012;
+    return amount;
+  };
+
   const mergedHoldings = holdings.map(h => {
     const currentPrice = livePrices[h.symbol] || h.currentPrice || h.avgPurchasePrice;
     const value = h.shares * currentPrice;
@@ -69,21 +96,27 @@ export function PortfolioOverview() {
     const gain = value - cost;
     const gainPercent = cost === 0 ? 0 : (gain / cost) * 100;
 
+    // Convert to display currency for totals
+    const holdingCurrency = h.currency || "INR";
+    const valueInDisplayCurrency = toDisplayCurrency(value, holdingCurrency);
+    const costInDisplayCurrency = toDisplayCurrency(cost, holdingCurrency);
+
     return {
       ...h,
       currentPrice,
       value,
       gain,
-      gainPercent
+      gainPercent,
+      valueInDisplayCurrency,
+      costInDisplayCurrency,
     };
   });
 
-  const totalValue = mergedHoldings.reduce((sum, h) => sum + h.value, 0);
-  const totalCost = mergedHoldings.reduce((sum, h) => sum + (h.shares * h.avgPurchasePrice), 0);
+  // Calculate totals in display currency
+  const totalValue = mergedHoldings.reduce((sum, h) => sum + h.valueInDisplayCurrency, 0);
+  const totalCost = mergedHoldings.reduce((sum, h) => sum + h.costInDisplayCurrency, 0);
   const totalGain = totalValue - totalCost;
   const totalGainPercent = totalCost === 0 ? 0 : ((totalGain / totalCost) * 100);
-
-  const portfolioCurrency = holdings.length > 0 ? (holdings[0].currency || "INR") : "INR";
 
   const handleDeleteConfirm = async () => {
     if (holdingToDelete) {
@@ -100,13 +133,13 @@ export function PortfolioOverview() {
         <Card>
           <CardHeader className="pb-2">
             <CardDescription>Total Value</CardDescription>
-            <CardTitle className="text-2xl">{formatCurrency(totalValue, portfolioCurrency)}</CardTitle>
+            <CardTitle className="text-2xl">{formatCurrency(totalValue, displayCurrency)}</CardTitle>
           </CardHeader>
         </Card>
         <Card>
           <CardHeader className="pb-2">
             <CardDescription>Total Cost</CardDescription>
-            <CardTitle className="text-2xl">{formatCurrency(totalCost, portfolioCurrency)}</CardTitle>
+            <CardTitle className="text-2xl">{formatCurrency(totalCost, displayCurrency)}</CardTitle>
           </CardHeader>
         </Card>
         <Card>
@@ -114,7 +147,7 @@ export function PortfolioOverview() {
             <CardDescription>Total Gain/Loss</CardDescription>
             <CardTitle className="text-2xl flex items-center gap-2">
               <span className={totalGain >= 0 ? "text-green-600" : "text-red-600"}>
-                {formatCurrency(totalGain, portfolioCurrency)}
+                {formatCurrency(totalGain, displayCurrency)}
               </span>
             </CardTitle>
           </CardHeader>
@@ -149,6 +182,9 @@ export function PortfolioOverview() {
           <div className="flex gap-2">
             <Button size="sm" variant="outline" onClick={() => setIsImportOpen(true)}>
               <Upload className="mr-2 h-4 w-4" /> Upload Image
+            </Button>
+            <Button size="sm" variant="outline" onClick={() => setIsCsvImportOpen(true)}>
+              <Upload className="mr-2 h-4 w-4" /> Import CSV
             </Button>
             <Button size="sm" onClick={() => setIsAddOpen(true)}>
               <PlusCircle className="mr-2 h-4 w-4" /> Add Holding
@@ -234,6 +270,11 @@ export function PortfolioOverview() {
       <ImportDialog
         open={isImportOpen}
         onOpenChange={setIsImportOpen}
+      />
+
+      <CsvImportDialog
+        open={isCsvImportOpen}
+        onOpenChange={setIsCsvImportOpen}
       />
 
       {editingHolding && (
@@ -858,6 +899,289 @@ function ImportDialog({
                 <>
                   <Check className="mr-2 h-4 w-4" />
                   Save {parsedHoldings.length} Holdings
+                </>
+              )}
+            </Button>
+          )}
+        </DialogFooter>
+      </DialogContent>
+    </Dialog>
+  );
+}
+
+function CsvImportDialog({
+  open,
+  onOpenChange
+}: {
+  open: boolean;
+  onOpenChange: (open: boolean) => void;
+}) {
+  const addHolding = useMutation(api.portfolios.addHolding);
+
+  const [csvContent, setCsvContent] = useState("");
+  const [parsedHoldings, setParsedHoldings] = useState<ParsedHolding[]>([]);
+  const [isSaving, setIsSaving] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+  const fileInputRef = useRef<HTMLInputElement>(null);
+
+  const parseCsv = (content: string) => {
+    const lines = content.trim().split("\n");
+    if (lines.length < 2) {
+      setError("CSV must have a header row and at least one data row");
+      return;
+    }
+
+    const headers = lines[0].toLowerCase().split(",").map(h => h.trim());
+    const symbolIndex = headers.findIndex(h => h.includes("symbol") || h.includes("ticker"));
+    const nameIndex = headers.findIndex(h => h.includes("name") || h.includes("company"));
+    const sharesIndex = headers.findIndex(h => h.includes("shares") || h.includes("quantity") || h.includes("qty"));
+    const priceIndex = headers.findIndex(h => h.includes("price") || h.includes("avg") || h.includes("cost"));
+    const currencyIndex = headers.findIndex(h => h.includes("currency") || h.includes("curr"));
+
+    if (symbolIndex === -1 || sharesIndex === -1 || priceIndex === -1) {
+      setError("CSV must have columns for symbol/ticker, shares/quantity, and price");
+      return;
+    }
+
+    const holdings: ParsedHolding[] = [];
+    for (let i = 1; i < lines.length; i++) {
+      const values = lines[i].split(",").map(v => v.trim().replace(/"/g, ""));
+      if (values.length > Math.max(symbolIndex, sharesIndex, priceIndex)) {
+        const symbol = values[symbolIndex];
+        const shares = parseFloat(values[sharesIndex]);
+        const price = parseFloat(values[priceIndex]);
+
+        if (symbol && !isNaN(shares) && !isNaN(price) && shares > 0 && price > 0) {
+          holdings.push({
+            symbol: symbol.toUpperCase(),
+            name: nameIndex >= 0 ? values[nameIndex] || null : null,
+            quantity: shares,
+            avgPrice: price,
+            currency: currencyIndex >= 0 ? values[currencyIndex] || "INR" : "INR",
+          });
+        }
+      }
+    }
+
+    if (holdings.length === 0) {
+      setError("No valid holdings found in CSV");
+      return;
+    }
+
+    setError(null);
+    setParsedHoldings(holdings);
+  };
+
+  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+
+    const reader = new FileReader();
+    reader.onload = (event) => {
+      const content = event.target?.result as string;
+      setCsvContent(content);
+      parseCsv(content);
+    };
+    reader.readAsText(file);
+  };
+
+  const handleTextChange = (value: string) => {
+    setCsvContent(value);
+    if (value.trim()) {
+      parseCsv(value);
+    } else {
+      setParsedHoldings([]);
+      setError(null);
+    }
+  };
+
+  const updateHolding = (index: number, field: keyof ParsedHolding, value: string | number) => {
+    setParsedHoldings(prev => {
+      const updated = [...prev];
+      updated[index] = { ...updated[index], [field]: value };
+      return updated;
+    });
+  };
+
+  const removeHolding = (index: number) => {
+    setParsedHoldings(prev => prev.filter((_, i) => i !== index));
+  };
+
+  const saveAllHoldings = async () => {
+    if (parsedHoldings.length === 0) return;
+
+    setIsSaving(true);
+    setError(null);
+
+    let savedCount = 0;
+    try {
+      for (const holding of parsedHoldings) {
+        if (holding.symbol && holding.quantity > 0 && holding.avgPrice > 0) {
+          await addHolding({
+            symbol: holding.symbol,
+            name: holding.name || holding.symbol,
+            shares: holding.quantity,
+            price: holding.avgPrice,
+            currency: holding.currency,
+          });
+          savedCount++;
+        }
+      }
+      setCsvContent("");
+      setParsedHoldings([]);
+      onOpenChange(false);
+      toast.success(`${savedCount} holding(s) imported from CSV`);
+    } catch (err) {
+      setError(err instanceof Error ? err.message : "Failed to save holdings");
+    } finally {
+      setIsSaving(false);
+    }
+  };
+
+  const handleClose = () => {
+    setCsvContent("");
+    setParsedHoldings([]);
+    setError(null);
+    onOpenChange(false);
+  };
+
+  return (
+    <Dialog open={open} onOpenChange={handleClose}>
+      <DialogContent className="sm:max-w-2xl max-h-[80vh] overflow-auto">
+        <DialogHeader>
+          <DialogTitle>Import from CSV</DialogTitle>
+          <DialogDescription>
+            Upload a CSV file or paste CSV content. Expected columns: Symbol, Name (optional), Shares, Price, Currency (optional)
+          </DialogDescription>
+        </DialogHeader>
+
+        <div className="space-y-4">
+          {/* File Upload */}
+          <div>
+            <input
+              type="file"
+              accept=".csv"
+              ref={fileInputRef}
+              onChange={handleFileChange}
+              className="hidden"
+            />
+            <Button variant="outline" onClick={() => fileInputRef.current?.click()}>
+              <Upload className="mr-2 h-4 w-4" /> Choose CSV File
+            </Button>
+          </div>
+
+          {/* CSV Text Area */}
+          <div className="space-y-2">
+            <Label>Or paste CSV content:</Label>
+            <textarea
+              value={csvContent}
+              onChange={(e) => handleTextChange(e.target.value)}
+              placeholder="Symbol,Name,Shares,Price,Currency&#10;RELIANCE.NS,Reliance Industries,10,2850,INR&#10;TCS.NS,Tata Consultancy,5,3750,INR"
+              className="w-full h-32 text-sm font-mono p-3 border rounded-md resize-none bg-muted/50"
+            />
+          </div>
+
+          {/* Error */}
+          {error && (
+            <Alert variant="destructive">
+              <AlertCircle className="h-4 w-4" />
+              <AlertDescription>{error}</AlertDescription>
+            </Alert>
+          )}
+
+          {/* Parsed Holdings Preview */}
+          {parsedHoldings.length > 0 && (
+            <div className="space-y-3">
+              <div className="flex items-center justify-between">
+                <Label>Preview ({parsedHoldings.length} holdings)</Label>
+              </div>
+              <div className="border rounded-lg overflow-hidden">
+                <Table>
+                  <TableHeader>
+                    <TableRow>
+                      <TableHead>Symbol</TableHead>
+                      <TableHead>Name</TableHead>
+                      <TableHead className="text-right">Shares</TableHead>
+                      <TableHead className="text-right">Avg Price</TableHead>
+                      <TableHead>Currency</TableHead>
+                      <TableHead className="w-[50px]"></TableHead>
+                    </TableRow>
+                  </TableHeader>
+                  <TableBody>
+                    {parsedHoldings.map((holding, index) => (
+                      <TableRow key={index}>
+                        <TableCell>
+                          <Input
+                            value={holding.symbol}
+                            onChange={(e) => updateHolding(index, "symbol", e.target.value.toUpperCase())}
+                            className="w-28 h-8"
+                          />
+                        </TableCell>
+                        <TableCell>
+                          <Input
+                            value={holding.name || ""}
+                            onChange={(e) => updateHolding(index, "name", e.target.value)}
+                            className="w-32 h-8"
+                          />
+                        </TableCell>
+                        <TableCell>
+                          <Input
+                            type="number"
+                            value={holding.quantity}
+                            onChange={(e) => updateHolding(index, "quantity", parseFloat(e.target.value) || 0)}
+                            className="w-20 h-8 text-right"
+                          />
+                        </TableCell>
+                        <TableCell>
+                          <Input
+                            type="number"
+                            step="0.01"
+                            value={holding.avgPrice}
+                            onChange={(e) => updateHolding(index, "avgPrice", parseFloat(e.target.value) || 0)}
+                            className="w-24 h-8 text-right"
+                          />
+                        </TableCell>
+                        <TableCell>
+                          <Input
+                            value={holding.currency}
+                            onChange={(e) => updateHolding(index, "currency", e.target.value.toUpperCase())}
+                            className="w-14 h-8"
+                          />
+                        </TableCell>
+                        <TableCell>
+                          <Button
+                            variant="ghost"
+                            size="icon"
+                            onClick={() => removeHolding(index)}
+                            className="h-8 w-8 text-destructive hover:text-destructive"
+                          >
+                            <Trash2 className="h-4 w-4" />
+                          </Button>
+                        </TableCell>
+                      </TableRow>
+                    ))}
+                  </TableBody>
+                </Table>
+              </div>
+            </div>
+          )}
+        </div>
+
+        <DialogFooter>
+          <Button variant="outline" onClick={handleClose}>
+            Cancel
+          </Button>
+          {parsedHoldings.length > 0 && (
+            <Button onClick={saveAllHoldings} disabled={isSaving}>
+              {isSaving ? (
+                <>
+                  <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                  Saving...
+                </>
+              ) : (
+                <>
+                  <Check className="mr-2 h-4 w-4" />
+                  Import {parsedHoldings.length} Holdings
                 </>
               )}
             </Button>

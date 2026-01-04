@@ -5,6 +5,7 @@ import { LineChart, Line, AreaChart, Area, PieChart, Pie, Cell, XAxis, YAxis, Ca
 import { useQuery, useAction } from "convex/react";
 import { api } from "@/convex/_generated/api";
 import { useEffect, useState, useMemo } from "react";
+import { Skeleton } from "@/components/ui/skeleton";
 
 import { formatCurrency } from "@/lib/formatCurrency";
 
@@ -105,7 +106,33 @@ export function Analytics() {
     // Add more real metrics calculation here
   ];
 
-  if (!holdings) return <div>Loading analytics...</div>;
+  if (!holdings) return (
+    <div className="space-y-6">
+      <div className="grid gap-4 md:grid-cols-3 lg:grid-cols-6">
+        {[1, 2].map((i) => (
+          <Card key={i}>
+            <CardHeader className="pb-2">
+              <Skeleton className="h-4 w-20" />
+              <Skeleton className="h-8 w-24 mt-2" />
+              <Skeleton className="h-3 w-16 mt-2" />
+            </CardHeader>
+          </Card>
+        ))}
+      </div>
+      <div className="max-w-3xl">
+        <Skeleton className="h-10 w-48 mb-4" />
+        <Card>
+          <CardHeader>
+            <Skeleton className="h-6 w-40" />
+            <Skeleton className="h-4 w-60 mt-2" />
+          </CardHeader>
+          <CardContent>
+            <Skeleton className="h-[400px] w-full" />
+          </CardContent>
+        </Card>
+      </div>
+    </div>
+  );
 
   return (
     <div className="space-y-6">
@@ -123,8 +150,8 @@ export function Analytics() {
       </div>
 
       {/* Charts */}
-      <Tabs defaultValue="performance" className="w-full">
-        <TabsList className="w-auto">
+      <Tabs defaultValue="performance">
+        <TabsList className="w-auto max-w-xl">
           <TabsTrigger value="performance">Performance</TabsTrigger>
           <TabsTrigger value="allocation">Allocation</TabsTrigger>
         </TabsList>

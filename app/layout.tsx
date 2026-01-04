@@ -1,8 +1,8 @@
 import type { Metadata } from "next";
 import { Geist, Geist_Mono, Inter } from "next/font/google";
 import "./globals.css";
-import { ConvexAuthNextjsProvider } from "@convex-dev/auth/nextjs";
 import ConvexClientProvider from "@/components/ConvexClientProvider";
+import { ThemeProvider } from "@/components/theme-provider";
 import { Toaster } from "@/components/ui/sonner";
 
 const inter = Inter({ subsets: ['latin'], variable: '--font-sans' });
@@ -18,8 +18,8 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "TrackFolio",
-  description: "Track you Portfolio",
+  title: "Tracko",
+  description: "Track your Portfolio",
 };
 export default function RootLayout({
   children,
@@ -28,14 +28,21 @@ export default function RootLayout({
 }>) {
 
   return (
-    <html lang="en" className={inter.variable}>
+    <html lang="en" className={inter.variable} suppressHydrationWarning>
       <body
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}
       >
-        <ConvexClientProvider>
-          {children}
-          <Toaster richColors position="bottom-right" />
-        </ConvexClientProvider>
+        <ThemeProvider
+          attribute="class"
+          defaultTheme="system"
+          enableSystem
+          disableTransitionOnChange
+        >
+          <ConvexClientProvider>
+            {children}
+            <Toaster richColors position="bottom-right" />
+          </ConvexClientProvider>
+        </ThemeProvider>
       </body>
     </html>
   );

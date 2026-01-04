@@ -34,7 +34,7 @@ export function SignInWithGoogle() {
 							Sign In!
 						</h1>
 						<p className="text-base text-muted-foreground">
-							login or create your Portfolio account.
+							Login or create your Tracko account.
 						</p>
 					</div>
 					<div className="space-y-2">

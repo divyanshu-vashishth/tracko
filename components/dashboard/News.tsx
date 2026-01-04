@@ -1,196 +1,186 @@
 "use client"
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { Badge } from "@/components/ui/badge";
-import { ScrollArea } from "@/components/ui/scroll-area";
-import { Separator } from "@/components/ui/separator";
-import { TrendingUp, TrendingDown, Activity, DollarSign, Globe, Filter } from "lucide-react";
 import { useAction, useQuery } from "convex/react";
 import { api } from "@/convex/_generated/api";
 import { useEffect, useState } from "react";
-import { Button } from "@/components/ui/button";
+import { Skeleton } from "@/components/ui/skeleton";
+import { Checkbox } from "@/components/ui/checkbox";
+import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
+
+function formatTimeAgo(dateString: string): string {
+  const date = new Date(dateString);
+  const now = new Date();
+  const diffMs = now.getTime() - date.getTime();
+  const diffMins = Math.floor(diffMs / 60000);
+  const diffHours = Math.floor(diffMins / 60);
+  const diffDays = Math.floor(diffHours / 24);
+
+  if (diffMins < 60) {
+    return `${diffMins} min${diffMins !== 1 ? 's' : ''} ago`;
+  } else if (diffHours < 24) {
+    return `${diffHours} hour${diffHours !== 1 ? 's' : ''} ago`;
+  } else {
+    return `${diffDays} day${diffDays !== 1 ? 's' : ''} ago`;
+  }
+}
+
+function NewsSkeleton() {
+  return (
+    <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-x-8 gap-y-4">
+      {[...Array(9)].map((_, i) => (
+        <article key={i} className="space-y-2 py-3">
+          <Skeleton className="h-5 w-full" />
+          <Skeleton className="h-5 w-3/4" />
+          <Skeleton className="h-4 w-full" />
+          <Skeleton className="h-4 w-5/6" />
+          <Skeleton className="h-3 w-24 mt-1" />
+        </article>
+      ))}
+    </div>
+  );
+}
+
+// Generate unique colors for stocks
+const STOCK_COLORS = [
+  "#3b82f6", "#10b981", "#f59e0b", "#8b5cf6", "#ef4444",
+  "#06b6d4", "#ec4899", "#14b8a6", "#a855f7", "#f97316",
+];
 
 export function News() {
   const getNews = useAction(api.news.getMarketNews);
   const holdings = useQuery(api.portfolios.getHoldings);
   const [newsItems, setNewsItems] = useState<any[]>([]);
+  const [isLoading, setIsLoading] = useState(true);
   const [selectedSymbols, setSelectedSymbols] = useState<Set<string>>(new Set());
 
   useEffect(() => {
+    setIsLoading(true);
     getNews().then((items) => {
-        setNewsItems(items);
-    });
+      setNewsItems(items);
+      setIsLoading(false);
+    }).catch(() => setIsLoading(false));
   }, [getNews]);
 
   const portfolioSymbols = holdings ? Array.from(new Set(holdings.map((h: any) => h.symbol))) : [];
 
   const toggleSymbol = (symbol: string) => {
-    const newSelected = new Set(selectedSymbols);
-    if (newSelected.has(symbol)) {
-        newSelected.delete(symbol);
-    } else {
-        newSelected.add(symbol);
-    }
-    setSelectedSymbols(newSelected);
+    setSelectedSymbols(prev => {
+      const newSet = new Set(prev);
+      if (newSet.has(symbol)) {
+        newSet.delete(symbol);
+      } else {
+        newSet.add(symbol);
+      }
+      return newSet;
+    });
   };
 
-  // Simple client-side tagging
-  const enrichedNews = newsItems.map(item => {
-    const titleUpper = item.title.toUpperCase();
-    const contentUpper = (item.contentSnippet || "").toUpperCase();
-    
-    // Check if any portfolio symbol is mentioned
-    const matchedSymbol = portfolioSymbols.find((symbol: any) => 
+  // Filter news based on selected symbols
+  const filteredNews = selectedSymbols.size > 0
+    ? newsItems.filter(item => {
+      const titleUpper = item.title.toUpperCase();
+      const contentUpper = (item.contentSnippet || "").toUpperCase();
+      return Array.from(selectedSymbols).some((symbol: string) =>
         titleUpper.includes(symbol) || contentUpper.includes(symbol)
+      );
+    })
+    : newsItems;
+
+  if (isLoading) {
+    return (
+      <div className="space-y-6">
+        <Card>
+          <CardHeader>
+            <Skeleton className="h-6 w-48" />
+            <Skeleton className="h-4 w-64 mt-2" />
+          </CardHeader>
+          <CardContent>
+            <div className="flex gap-3">
+              {[1, 2, 3].map(i => (
+                <Skeleton key={i} className="h-10 w-24" />
+              ))}
+            </div>
+          </CardContent>
+        </Card>
+        <NewsSkeleton />
+      </div>
     );
+  }
 
-    return {
-        ...item,
-        symbol: matchedSymbol || null,
-        category: matchedSymbol ? "Portfolio" : "Market",
-        sentiment: "neutral" 
-    };
-  });
-
-  const portfolioNewsCount = enrichedNews.filter(i => i.symbol).length;
-  const recentNewsCount = enrichedNews.length;
-
-  const filteredNews = selectedSymbols.size > 0 
-    ? enrichedNews.filter(item => item.symbol && selectedSymbols.has(item.symbol))
-    : enrichedNews;
-
-  const getSentimentIcon = (sentiment: string) => {
-     return <Activity className="h-4 w-4 text-yellow-600" />;
-  };
-
-  const getSentimentColor = (sentiment: string) => {
-    return "bg-yellow-100 text-yellow-800 dark:bg-yellow-900 dark:text-yellow-200";
-  };
-
-  const getCategoryIcon = (category: string) => {
-    switch (category) {
-      case "Portfolio":
-        return <DollarSign className="h-4 w-4" />;
-      case "Market":
-        return <Globe className="h-4 w-4" />;
-      default:
-        return <Activity className="h-4 w-4" />;
-    }
-  };
+  if (newsItems.length === 0) {
+    return (
+      <div className="text-center text-muted-foreground py-10">
+        No news available at the moment.
+      </div>
+    );
+  }
 
   return (
     <div className="space-y-6">
-      {/* Market Summary Cards */}
-      <div className="grid gap-4 md:grid-cols-3">
+      {/* Stock Filter Section */}
+      {portfolioSymbols.length > 0 && (
         <Card>
-          <CardHeader className="pb-2">
-            <CardDescription>Portfolio Holdings News</CardDescription>
-            <CardTitle className="text-2xl">{portfolioNewsCount} Updates</CardTitle>
-            <p className="text-xs text-muted-foreground">Affecting your positions</p>
+          <CardHeader className="pb-3">
+            <CardTitle className="text-lg">Filter by Stock</CardTitle>
+            <CardDescription>Select stocks to filter relevant news</CardDescription>
           </CardHeader>
-        </Card>
-        <Card>
-          <CardHeader className="pb-2">
-            <CardDescription>Market Sentiment</CardDescription>
-            <CardTitle className="text-2xl flex items-center gap-2">
-              <Activity className="h-5 w-5 text-yellow-600" />
-              <span className="text-yellow-600">Neutral</span>
-            </CardTitle>
-            <p className="text-xs text-muted-foreground">Based on recent news</p>
-          </CardHeader>
-        </Card>
-        <Card>
-          <CardHeader className="pb-2">
-            <CardDescription>Latest News</CardDescription>
-            <CardTitle className="text-2xl">{recentNewsCount} News </CardTitle>
-            <p className="text-xs text-muted-foreground">From CNBC TV18</p>
-          </CardHeader>
-        </Card>
-      </div>
-
-      {/* News Feed */}
-      <Card>
-        <CardHeader>
-          <div className="flex items-center justify-between">
-            <div>
-                <CardTitle>Market News & Updates</CardTitle>
-                <CardDescription>Latest news affecting your portfolio and the market</CardDescription>
-            </div>
-            {selectedSymbols.size > 0 && (
-                <Button variant="ghost" size="sm" onClick={() => setSelectedSymbols(new Set())}>
-                    Clear Filter
-                </Button>
-            )}
-          </div>
-          
-          {/* Filter Bar */}
-          {portfolioSymbols.length > 0 && (
-              <div className="flex flex-wrap gap-2 mt-4">
-                  <span className="text-sm text-muted-foreground flex items-center gap-2 mr-2">
-                    <Filter className="h-4 w-4" /> Filter by:
-                  </span>
-                  {portfolioSymbols.map((symbol) => (
-                      <Badge 
-                        key={symbol} 
-                        variant={selectedSymbols.has(symbol) ? "default" : "outline"}
-                        className="cursor-pointer hover:opacity-80 transition-opacity"
-                        onClick={() => toggleSymbol(symbol)}
-                      >
-                        {symbol}
-                      </Badge>
-                  ))}
-              </div>
-          )}
-        </CardHeader>
-        <CardContent>
-          <ScrollArea className="h-[600px] pr-4">
-            <div className="space-y-6">
-              {filteredNews.map((item, index) => (
-                <div key={item.guid || index}>
-                  <div className="space-y-3">
-                    <div className="flex items-start justify-between gap-4">
-                      <div className="flex-1 space-y-2">
-                        <div className="flex items-center gap-2 flex-wrap">
-                          {item.symbol && (
-                            <Badge variant="outline">{item.symbol}</Badge>
-                          )}
-                          <Badge variant="secondary" className="gap-1">
-                            {getCategoryIcon(item.category)}
-                            {item.category}
-                          </Badge>
-                        </div>
-                        <h3 className="font-semibold leading-tight">
-                          <a href={item.link} target="_blank" rel="noopener noreferrer" className="hover:underline">
-                            {item.title}
-                          </a>
-                        </h3>
-                        <p className="text-sm text-muted-foreground line-clamp-2">
-                          {item.contentSnippet}
-                        </p>
-                        <div className="flex items-center gap-3 text-xs text-muted-foreground">
-                          <span>{item.source}</span>
-                          <span>•</span>
-                          <span>{new Date(item.pubDate).toLocaleString()}</span>
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-                  {index < filteredNews.length - 1 && <Separator className="mt-6" />}
+          <CardContent>
+            <div className="flex flex-wrap gap-3">
+              {portfolioSymbols.map((symbol, index) => (
+                <div
+                  key={symbol}
+                  className="flex items-center gap-2 border rounded-lg px-3 py-2 hover:bg-muted/50 transition-colors"
+                >
+                  <Checkbox
+                    id={`stock-${symbol}`}
+                    checked={selectedSymbols.has(symbol)}
+                    onCheckedChange={() => toggleSymbol(symbol)}
+                  />
+                  <label
+                    htmlFor={`stock-${symbol}`}
+                    className="text-sm font-medium cursor-pointer flex items-center gap-2"
+                  >
+                    <div
+                      className="w-3 h-3 rounded-full"
+                      style={{ backgroundColor: STOCK_COLORS[index % STOCK_COLORS.length] }}
+                    />
+                    {symbol}
+                  </label>
                 </div>
               ))}
-              {filteredNews.length === 0 && newsItems.length > 0 && (
-                 <div className="text-center text-muted-foreground py-10">
-                    No news found for selected filters.
-                 </div>
-              )}
-               {newsItems.length === 0 && (
-                 <div className="text-center text-muted-foreground py-10">
-                    Loading news...
-                 </div>
-              )}
             </div>
-          </ScrollArea>
-        </CardContent>
-      </Card>
+            {selectedSymbols.size > 0 && (
+              <p className="text-sm text-muted-foreground mt-3">
+                Showing {filteredNews.length} news for selected stocks
+              </p>
+            )}
+          </CardContent>
+        </Card>
+      )}
+
+      {/* News Grid */}
+      <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-x-8 gap-y-1">
+        {filteredNews.map((item, index) => (
+          <article key={item.guid || index} className="py-3 border-b border-border/40 last:border-0">
+            <h3 className="font-semibold text-primary leading-snug hover:underline">
+              <a href={item.link} target="_blank" rel="noopener noreferrer">
+                {item.title}
+              </a>
+            </h3>
+            <p className="text-sm text-muted-foreground line-clamp-3 mt-1.5 leading-relaxed">
+              {item.contentSnippet}
+            </p>
+            <p className="text-xs text-muted-foreground mt-2">
+              {formatTimeAgo(item.pubDate)}
+            </p>
+          </article>
+        ))}
+      </div>
+
+      {filteredNews.length === 0 && selectedSymbols.size > 0 && (
+        <div className="text-center text-muted-foreground py-10">
+          No news found for selected stocks.
+        </div>
+      )}
     </div>
   );
 }
