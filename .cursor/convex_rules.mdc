@@ -6,6 +6,13 @@ globs: **/*.ts,**/*.tsx,**/*.js,**/*.jsx
 # Convex guidelines
 ## Function guidelines
 ### New function syntax
+
+- For auth userId use
+```typescript
+import { getAuthUserId } from "@convex-dev/auth/server";
+getAuthUserId(ctx);
+```
+
 - ALWAYS use the new function syntax for Convex functions. For example:
 ```typescript
 import { query } from "./_generated/server";

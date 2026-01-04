@@ -24,12 +24,6 @@ export function Hero() {
                       <ChevronRight className="opacity-50" />
                   </Link>
                   </Button>
-                  <Button size="lg" variant="outline">
-                    <Link href="/dashboard" className="flex items-center gap-2">
-                    <CirclePlay className="fill-primary/25 stroke-primary" />
-                    <span className="text-nowrap">View Demo</span>
-                    </Link>
-                  </Button>
                 </div>
               </div>
 

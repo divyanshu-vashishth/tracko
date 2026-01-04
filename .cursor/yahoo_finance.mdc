@@ -1,0 +1,3165 @@
+---
+alwaysApply: true
+---
+
+- Always use yahooFinance like this:
+```typescript
+import YahooFinance from "yahoo-finance2";
+
+const yahooFinance = new YahooFinance();
+
+const results = await yahooFinance.search("Apple");
+
+const quote = await yahooFinance.quote('AAPL');
+const { regularMarketPrice as price, currency } = quote;
+Available modules: chart, fundamentalsTimeSeries, historical, insights, options, quote, quoteSummary (submodules: assetProfile, balanceSheetHistory, balanceSheetHistoryQuarterly, calendarEvents, cashflowStatementHistory, cashflowStatementHistoryQuarterly, defaultKeyStatistics, earnings, earningsHistory, earningsTrend, financialData, fundOwnership, fundPerformance, fundProfile, incomeStatementHistory, incomeStatementHistoryQuarterly, indexTrend, industryTrend, insiderHolders, insiderTransactions, institutionOwnership, majorDirectHolders, majorHoldersBreakdown, netSharePurchaseActivity, price, quoteType, recommendationTrend, secFilings, sectorTrend, summaryDetail, summaryProfile, symbol, topHoldings, upgradeDowngradeHistory), recommendationsBySymbol, screener, search, trendingSymbols.
+
+Extras: quoteCombine.
+```
+default
+default
+The full Yahoo Finance API client with all modules: quote(), search(), etc.
+createYahooFinance
+createYahooFinance
+Create a new YahooFinance class with the given options (usually a list of modules, or special options useful for testing).
+YahooFinance
+Instantiate a new YahooFinance client.
+_env
+_fetch
+_logObj
+_moduleExec
+_notices
+_opts
+_setOpts
+YahooFinanceWithModules
+No documentation available
+lib/cookieJar
+ExtendedCookieJar
+ExtendedCookieJar extends the npm:tough-cookie CookieJar class with the methods below but can otherwise be instantiated as usual, particularly with custom stores, either by extending the tough-cookie Store class yourself or finding an existing package that does so, e.g. "tough-cookie store" search on npm.
+setFromSetCookieHeaders
+lib/getCrumb
+Yahoo Finance Crumb and Cookie Fetcher
+_getCrumb
+Returns the crumb needed for Yahoo Finance requests - from the cookieJar if it exists (where we store it with a fake URL), otherwise, follows the necessary redirect flow on Yahoo Finance to get a fresh one.
+getCrumb
+Gets the crumb for Yahoo Finance requests. See _getCrumb.
+getCrumbClear
+Clears the stored crumb and all cookies in the given jar. Doubtful you'll ever use this outside development and testing.
+lib/moduleCommon
+ModuleError
+test
+ModuleOptions
+Common options for all "modules" (quote(), etc). Usually the 3rd parameter in most option calls, i.e.
+validateOptions
+validateResult
+ModuleOptionsWithValidateFalse
+No documentation available
+validateResult
+ModuleOptionsWithValidateTrue
+No documentation available
+validateResult
+ModuleThis
+No documentation available
+_moduleExec
+YahooFinanceFetchModuleOptions
+No documentation available
+devel
+fetch
+fetchOptions
+queue
+lib/options
+Logger
+Logger options for YahooFinance.
+debug
+dir
+error
+info
+warn
+mergeObjects
+No documentation available
+NOTICE_IDS
+No documentation available
+QueueOptions
+No documentation available
+_queue
+concurrency
+setOptions
+No documentation available
+validateOptions
+No documentation available
+ValidationOptions
+No documentation available
+allowAdditionalProps
+logErrors
+logOptionsErrors
+YahooFinanceOptions
+Non-primitive options for YahooFinance (i.e. classes, instances, funcs).
+cookieJar
+fetch
+fetchOptions
+logger
+YahooFinanceOptionsJSON
+Primitive options for YahooFinance (i.e. strings, numbers, booleans)
+YF_QUERY_HOST
+queue
+quoteCombine
+suppressNotices
+validation
+versionCheck
+modules/autoc
+Auto-complete module (DECOMMISSIONED).
+autoc
+Auto-complete function (DECOMMISSIONED).
+modules/chart
+Chart module for retrieving historical price data with extensive customization options.
+_chart
+No documentation available
+chart
+Fetch historical price, dividend, split and other data useful for charts.
+ChartEventDividend
+No documentation available
+amount
+date
+ChartEventDividends
+No documentation available
+ChartEventsArray
+No documentation available
+dividends
+splits
+ChartEventsObject
+No documentation available
+dividends
+splits
+ChartEventSplit
+No documentation available
+date
+denominator
+numerator
+splitRatio
+ChartEventSplits
+No documentation available
+ChartIndicatorAdjclose
+No documentation available
+adjclose
+ChartIndicatorQuote
+No documentation available
+close
+high
+low
+open
+volume
+ChartIndicatorsObject
+No documentation available
+adjclose
+quote
+ChartMeta
+No documentation available
+chartPreviousClose
+currency
+currentTradingPeriod
+dataGranularity
+exchangeName
+exchangeTimezoneName
+fiftyTwoWeekHigh
+fiftyTwoWeekLow
+firstTradeDate
+fullExchangeName
+gmtoffset
+hasPrePostMarketData
+instrumentType
+longName
+previousClose
+priceHint
+range
+regularMarketDayHigh
+regularMarketDayLow
+regularMarketPrice
+regularMarketTime
+regularMarketVolume
+scale
+shortName
+symbol
+timezone
+tradingPeriods
+validRanges
+ChartMetaTradingPeriod
+No documentation available
+end
+gmtoffset
+start
+timezone
+ChartMetaTradingPeriods
+No documentation available
+post
+pre
+regular
+ChartOptions
+No documentation available
+events
+includePrePost
+interval
+lang
+period1
+period2
+return
+useYfid
+ChartOptionsWithReturnArray
+No documentation available
+return
+ChartOptionsWithReturnObject
+No documentation available
+return
+ChartResultArray
+No documentation available
+events
+meta
+quotes
+ChartResultArrayQuote
+No documentation available
+adjclose
+close
+date
+high
+low
+open
+volume
+ChartResultObject
+No documentation available
+events
+indicators
+meta
+timestamp
+modules/dailyGainers
+Daily Gainers module (DEPRECATED).
+dailyGainers
+Daily gainers function (DEPRECATED).
+modules/dailyLosers
+Daily Losers module (DEPRECATED).
+dailyLosers
+Daily losers function (DEPRECATED).
+modules/fundamentalsTimeSeries
+Fundamentals Time Series module for retrieving detailed financial statement data over time.
+fundamentalsTimeSeries
+Get detailed financial statements (income statement, balance sheet, cash flow statement) over time (quarterly or annually).
+FundamentalsTimeSeries_Modules
+No documentation available
+FundamentalsTimeSeries_Period
+No documentation available
+FundamentalsTimeSeries_Types
+No documentation available
+FundamentalsTimeSeriesAllResult
+No documentation available
+FundamentalsTimeSeriesBalanceSheetResult
+No documentation available
+EBIT
+EBITDA
+TYPE
+accountsPayable
+accountsReceivable
+accruedInterestReceivable
+accumulatedDepreciation
+additionalPaidInCapital
+advanceFromFederalHomeLoanBanks
+allowanceForDoubtfulAccountsReceivable
+allowanceForLoansAndLeaseLosses
+allowanceForNotesReceivable
+assetsHeldForSale
+assetsHeldForSaleCurrent
+availableForSaleSecurities
+bankIndebtedness
+bankOwnedLifeInsurance
+basicAverageShares
+basicEPS
+beginningCashPosition
+buildingsAndImprovements
+capitalExpenditure
+capitalLeaseObligations
+capitalStock
+cashAndCashEquivalents
+cashAndDueFromBanks
+cashCashEquivalentsAndFederalFundsSold
+cashCashEquivalentsAndShortTermInvestments
+cashDividendsPaid
+cashEquivalents
+cashFinancial
+cashFlowFromContinuingFinancingActivities
+cashFlowFromContinuingInvestingActivities
+cashFlowFromContinuingOperatingActivities
+changeInAccountPayable
+changeInInventory
+changeInOtherCurrentAssets
+changeInOtherCurrentLiabilities
+changeInOtherWorkingCapital
+changeInPayable
+changeInPayablesAndAccruedExpense
+changeInReceivables
+changeInWorkingCapital
+changesInAccountReceivables
+changesInCash
+commercialLoan
+commercialPaper
+commonStock
+commonStockDividendPaid
+commonStockEquity
+commonStockPayments
+constructionInProgress
+consumerLoan
+costOfRevenue
+currentAccruedExpenses
+currentAssets
+currentCapitalLeaseObligation
+currentDebt
+currentDebtAndCapitalLeaseObligation
+currentDeferredAssets
+currentDeferredLiabilities
+currentDeferredRevenue
+currentDeferredTaxesAssets
+currentDeferredTaxesLiabilities
+currentLiabilities
+currentNotesPayable
+currentProvisions
+customerAcceptances
+customerAccounts
+date
+deferredAssets
+deferredIncomeTax
+deferredTax
+deferredTaxAssets
+definedPensionBenefit
+depositsbyBank
+depreciationAmortizationDepletion
+depreciationAndAmortization
+derivativeAssets
+derivativeProductLiabilities
+dilutedAverageShares
+dilutedEPS
+dilutedNIAvailtoComStockholders
+dividendsPayable
+dueFromRelatedParties
+duefromRelatedPartiesCurrent
+duefromRelatedPartiesNonCurrent
+duetoRelatedParties
+duetoRelatedPartiesCurrent
+duetoRelatedPartiesNonCurrent
+employeeBenefits
+endCashPosition
+federalFundsPurchased
+federalFundsPurchasedAndSecuritiesSoldUnderAgreementToRepurchase
+federalFundsSold
+federalFundsSoldAndSecuritiesPurchaseUnderAgreementsToResell
+federalHomeLoanBankStock
+financialAssets
+financialAssetsDesignatedasFairValueThroughProfitorLossTotal
+financialInstrumentsSoldUnderAgreementsToRepurchase
+financingCashFlow
+finishedGoods
+fixedAssetsRevaluationReserve
+foreclosedAssets
+foreignCurrencyTranslationAdjustments
+freeCashFlow
+gainsLossesNotAffectingRetainedEarnings
+generalPartnershipCapital
+goodwill
+goodwillAndOtherIntangibleAssets
+grossAccountsReceivable
+grossLoan
+grossNotesReceivable
+grossPPE
+grossProfit
+hedgingAssetsCurrent
+heldToMaturitySecurities
+incomeTaxPaidSupplementalData
+incomeTaxPayable
+interestBearingDepositsAssets
+interestBearingDepositsLiabilities
+interestExpense
+interestExpenseNonOperating
+interestIncome
+interestIncomeNonOperating
+interestPaidSupplementalData
+interestPayable
+inventoriesAdjustmentsAllowances
+inventory
+investedCapital
+investingCashFlow
+investmentProperties
+investmentinFinancialAssets
+investmentsAndAdvances
+investmentsInOtherVenturesUnderEquityMethod
+investmentsinAssociatesatCost
+investmentsinJointVenturesatCost
+investmentsinSubsidiariesatCost
+issuanceOfDebt
+landAndImprovements
+leases
+liabilitiesHeldforSaleNonCurrent
+liabilitiesOfDiscontinuedOperations
+limitedPartnershipCapital
+lineOfCredit
+loansHeldForSale
+loansReceivable
+longTermCapitalLeaseObligation
+longTermDebt
+longTermDebtAndCapitalLeaseObligation
+longTermDebtIssuance
+longTermDebtPayments
+longTermEquityInvestment
+longTermProvisions
+machineryFurnitureEquipment
+mineralProperties
+minimumPensionLiabilities
+minorityInterest
+moneyMarketInvestments
+mortgageLoan
+netBusinessPurchaseAndSale
+netCommonStockIssuance
+netDebt
+netIncome
+netIncomeCommonStockholders
+netIncomeContinuousOperations
+netIncomeFromContinuingAndDiscontinuedOperation
+netIncomeFromContinuingOperationNetMinorityInterest
+netIncomeFromContinuingOperations
+netIncomeIncludingNoncontrollingInterests
+netInterestIncome
+netInvestmentPurchaseAndSale
+netIssuancePaymentsOfDebt
+netLoan
+netLongTermDebtIssuance
+netNonOperatingInterestIncomeExpense
+netOtherFinancingCharges
+netOtherInvestingChanges
+netPPE
+netPPEPurchaseAndSale
+netShortTermDebtIssuance
+netTangibleAssets
+nonCurrentAccountsReceivable
+nonCurrentAccruedExpenses
+nonCurrentDeferredAssets
+nonCurrentDeferredLiabilities
+nonCurrentDeferredRevenue
+nonCurrentDeferredTaxesAssets
+nonCurrentDeferredTaxesLiabilities
+nonCurrentNoteReceivables
+nonCurrentPensionAndOtherPostretirementBenefitPlans
+nonCurrentPrepaidAssets
+nonInterestBearingDeposits
+normalizedEBITDA
+normalizedIncome
+notesReceivable
+operatingCashFlow
+operatingExpense
+operatingIncome
+operatingRevenue
+ordinarySharesNumber
+otherAssets
+otherCapitalStock
+otherCurrentAssets
+otherCurrentBorrowings
+otherCurrentLiabilities
+otherEquityAdjustments
+otherEquityInterest
+otherIncomeExpense
+otherIntangibleAssets
+otherInventories
+otherInvestments
+otherLiabilities
+otherLoanAssets
+otherNonCashItems
+otherNonCurrentAssets
+otherNonCurrentLiabilities
+otherNonOperatingIncomeExpenses
+otherPayable
+otherProperties
+otherRealEstateOwned
+otherReceivables
+otherShortTermInvestments
+payables
+payablesAndAccruedExpenses
+pensionandOtherPostRetirementBenefitPlansCurrent
+periodType
+preferredSecuritiesOutsideStockEquity
+preferredSharesNumber
+preferredStock
+preferredStockEquity
+prepaidAssets
+pretaxIncome
+properties
+purchaseOfBusiness
+purchaseOfInvestment
+purchaseOfPPE
+rawMaterials
+receivables
+receivablesAdjustmentsAllowances
+reconciledCostOfRevenue
+reconciledDepreciation
+repaymentOfDebt
+repurchaseOfCapitalStock
+researchAndDevelopment
+restrictedCash
+restrictedCashAndCashEquivalents
+restrictedCashAndInvestments
+restrictedCommonStock
+restrictedInvestments
+retainedEarnings
+saleOfInvestment
+securitiesAndInvestments
+securitiesLoaned
+securityAgreeToBeResell
+securityBorrowed
+sellingGeneralAndAdministration
+shareIssued
+shortTermDebtPayments
+stockBasedCompensation
+stockholdersEquity
+subordinatedLiabilities
+tangibleBookValue
+taxProvision
+taxRateForCalcs
+taxesReceivable
+totalAssets
+totalCapitalization
+totalDebt
+totalDeposits
+totalEquityGrossMinorityInterest
+totalExpenses
+totalLiabilitiesNetMinorityInterest
+totalNonCurrentAssets
+totalNonCurrentLiabilitiesNetMinorityInterest
+totalOperatingIncomeAsReported
+totalPartnershipCapital
+totalRevenue
+totalTaxPayable
+tradeandOtherPayablesNonCurrent
+tradingLiabilities
+tradingSecurities
+treasurySharesNumber
+treasuryStock
+unearnedIncome
+unrealizedGainLoss
+workInProcess
+workingCapital
+FundamentalsTimeSeriesCashFlowResult
+No documentation available
+AmortizationAmortizationCashFlow
+TYPE
+adjustedGeographySegmentData
+allTaxesPaid
+amortizationCashFlow
+amortizationOfFinancingCostsAndDiscounts
+amortizationOfIntangibles
+amortizationOfSecurities
+assetImpairmentCharge
+beginningCashPosition
+capitalExpenditure
+capitalExpenditureReported
+cashDividendsPaid
+cashFlowFromContinuingFinancingActivities
+cashFlowFromContinuingInvestingActivities
+cashFlowFromContinuingOperatingActivities
+cashFlowFromDiscontinuedOperation
+cashFlowsfromusedinOperatingActivitiesDirect
+cashFromDiscontinuedFinancingActivities
+cashFromDiscontinuedInvestingActivities
+cashFromDiscontinuedOperatingActivities
+cashPaymentsforDepositsbyBanksandCustomers
+cashPaymentsforLoans
+cashReceiptsfromDepositsbyBanksandCustomers
+cashReceiptsfromFeesandCommissions
+cashReceiptsfromLoans
+cashReceiptsfromSecuritiesRelatedActivities
+cashReceiptsfromTaxRefunds
+changeInAccountPayable
+changeInAccruedExpense
+changeInDeferredCharges
+changeInDividendPayable
+changeInFederalFundsAndSecuritiesSoldForRepurchase
+changeInIncomeTaxPayable
+changeInInterestPayable
+changeInInventory
+changeInLoans
+changeInOtherCurrentAssets
+changeInOtherCurrentLiabilities
+changeInOtherWorkingCapital
+changeInPayable
+changeInPayablesAndAccruedExpense
+changeInPrepaidAssets
+changeInReceivables
+changeInTaxPayable
+changeInWorkingCapital
+changesInAccountReceivables
+changesInCash
+classesofCashPayments
+classesofCashReceiptsfromOperatingActivities
+commonStockDividendPaid
+commonStockIssuance
+commonStockPayments
+date
+decreaseinInterestBearingDepositsinBank
+deferredIncomeTax
+deferredTax
+depletion
+depreciation
+depreciationAmortizationDepletion
+depreciationAndAmortization
+dividendPaidCFO
+dividendReceivedCFO
+dividendsPaidDirect
+dividendsReceivedCFI
+dividendsReceivedDirect
+domesticSales
+earningsLossesFromEquityInvestments
+effectOfExchangeRateChanges
+endCashPosition
+excessTaxBenefitFromStockBasedCompensation
+financingCashFlow
+foreignSales
+freeCashFlow
+gainLossOnInvestmentSecurities
+gainLossOnSaleOfBusiness
+gainLossOnSaleOfPPE
+incomeTaxPaidSupplementalData
+increaseDecreaseInDeposit
+increaseinInterestBearingDepositsinBank
+interestPaidCFF
+interestPaidCFO
+interestPaidDirect
+interestPaidSupplementalData
+interestReceivedCFI
+interestReceivedCFO
+interestReceivedDirect
+interestandCommissionPaid
+investingCashFlow
+issuanceOfCapitalStock
+issuanceOfDebt
+longTermDebtIssuance
+longTermDebtPayments
+netBusinessPurchaseAndSale
+netCommonStockIssuance
+netForeignCurrencyExchangeGainLoss
+netIncomeFromContinuingOperations
+netIntangiblesPurchaseAndSale
+netInvestmentPropertiesPurchaseAndSale
+netInvestmentPurchaseAndSale
+netIssuancePaymentsOfDebt
+netLongTermDebtIssuance
+netOtherFinancingCharges
+netOtherInvestingChanges
+netPPEPurchaseAndSale
+netPreferredStockIssuance
+netProceedsPaymentForLoan
+netShortTermDebtIssuance
+operatingCashFlow
+operatingGainsLosses
+otherCashAdjustmentInsideChangeinCash
+otherCashAdjustmentOutsideChangeinCash
+otherCashPaymentsfromOperatingActivities
+otherCashReceiptsfromOperatingActivities
+otherNonCashItems
+paymentForLoans
+paymentsonBehalfofEmployees
+paymentstoSuppliersforGoodsandServices
+pensionAndEmployeeBenefitExpense
+periodType
+preferredStockDividendPaid
+preferredStockIssuance
+preferredStockPayments
+proceedsFromLoans
+proceedsFromStockOptionExercised
+proceedsPaymentFederalFundsSoldAndSecuritiesPurchasedUnderAgreementToResell
+proceedsPaymentInInterestBearingDepositsInBank
+provisionForLoanLeaseAndOtherLosses
+provisionandWriteOffofAssets
+purchaseOfBusiness
+purchaseOfIntangibles
+purchaseOfInvestment
+purchaseOfInvestmentProperties
+purchaseOfPPE
+realizedGainLossOnSaleOfLoansAndLease
+receiptsfromCustomers
+receiptsfromGovernmentGrants
+repaymentOfDebt
+repurchaseOfCapitalStock
+saleOfBusiness
+saleOfIntangibles
+saleOfInvestment
+saleOfInvestmentProperties
+saleOfPPE
+shortTermDebtIssuance
+shortTermDebtPayments
+stockBasedCompensation
+taxesRefundPaid
+taxesRefundPaidDirect
+unrealizedGainLossOnInvestmentSecurities
+FundamentalsTimeSeriesFinancialsResult
+No documentation available
+EBIT
+EBITDA
+TYPE
+amortization
+amortizationOfIntangiblesIncomeStatement
+averageDilutionEarnings
+basicAccountingChange
+basicAverageShares
+basicContinuousOperations
+basicDiscontinuousOperations
+basicEPS
+basicEPSOtherGainsLosses
+basicExtraordinary
+continuingAndDiscontinuedBasicEPS
+continuingAndDiscontinuedDilutedEPS
+costOfRevenue
+creditCard
+creditLossesProvision
+date
+depletionIncomeStatement
+depreciationAmortizationDepletionIncomeStatement
+depreciationAndAmortizationInIncomeStatement
+depreciationDepreciationIncomeStatement
+depreciationIncomeStatement
+dilutedAccountingChange
+dilutedAverageShares
+dilutedContinuousOperations
+dilutedDiscontinuousOperations
+dilutedEPS
+dilutedEPSOtherGainsLosses
+dilutedExtraordinary
+dilutedNIAvailtoComStockholders
+dividendIncome
+dividendPerShare
+earningsFromEquityInterest
+earningsFromEquityInterestNetOfTax
+equipment
+exciseTaxes
+explorationDevelopmentAndMineralPropertyLeaseExpenses
+feesAndCommissions
+feesandCommissionExpense
+feesandCommissionIncome
+foreignExchangeTradingGains
+gainLossonSaleofAssets
+gainOnSaleOfBusiness
+gainOnSaleOfPPE
+gainOnSaleOfSecurity
+gainonSaleofInvestmentProperty
+gainonSaleofLoans
+generalAndAdministrativeExpense
+grossProfit
+impairmentOfCapitalAssets
+incomefromAssociatesandOtherParticipatingInterests
+insuranceAndClaims
+interestExpense
+interestExpenseForDeposit
+interestExpenseForFederalFundsSoldAndSecuritiesPurchaseUnderAgreementsToResell
+interestExpenseForLongTermDebtAndCapitalSecurities
+interestExpenseForShortTermDebt
+interestExpenseNonOperating
+interestIncome
+interestIncomeAfterProvisionForLoanLoss
+interestIncomeFromDeposits
+interestIncomeFromFederalFundsSoldAndSecuritiesPurchaseUnderAgreementsToResell
+interestIncomeFromLeases
+interestIncomeFromLoans
+interestIncomeFromLoansAndLease
+interestIncomeFromSecurities
+interestIncomeNonOperating
+investmentBankingProfit
+lossonExtinguishmentofDebt
+minorityInterests
+netIncome
+netIncomeCommonStockholders
+netIncomeContinuousOperations
+netIncomeDiscontinuousOperations
+netIncomeExtraordinary
+netIncomeFromContinuingAndDiscontinuedOperation
+netIncomeFromContinuingOperationNetMinorityInterest
+netIncomeFromTaxLossCarryforward
+netIncomeIncludingNoncontrollingInterests
+netInterestIncome
+netNonOperatingInterestIncomeExpense
+netOccupancyExpense
+nonInterestExpense
+nonInterestIncome
+normalizedBasicEPS
+normalizedDilutedEPS
+normalizedEBITDA
+normalizedIncome
+occupancyAndEquipment
+operatingExpense
+operatingIncome
+operatingRevenue
+operationAndMaintenance
+otherCostofRevenue
+otherCustomerServices
+otherGandA
+otherIncomeExpense
+otherInterestExpense
+otherInterestIncome
+otherNonInterestExpense
+otherNonInterestIncome
+otherNonOperatingIncomeExpenses
+otherOperatingExpenses
+otherSpecialCharges
+otherTaxes
+otherThanPreferredStockDividend
+otherunderPreferredStockDividend
+periodType
+preferredStockDividends
+pretaxIncome
+professionalExpenseAndContractServicesExpense
+provisionForDoubtfulAccounts
+reconciledCostOfRevenue
+reconciledDepreciation
+rentAndLandingFees
+rentExpenseSupplemental
+reportedNormalizedBasicEPS
+reportedNormalizedDilutedEPS
+researchAndDevelopment
+restructuringAndMergernAcquisition
+salariesAndWages
+securitiesActivities
+securitiesAmortization
+sellingAndMarketingExpense
+sellingGeneralAndAdministration
+serviceChargeOnDepositorAccounts
+specialIncomeCharges
+taxEffectOfUnusualItems
+taxLossCarryforwardBasicEPS
+taxLossCarryforwardDilutedEPS
+taxProvision
+taxRateForCalcs
+totalExpenses
+totalMoneyMarketInvestments
+totalOperatingIncomeAsReported
+totalOtherFinanceCost
+totalPremiumsEarned
+totalRevenue
+totalUnusualItems
+totalUnusualItemsExcludingGoodwill
+tradingGainLoss
+trustFeesbyCommissions
+writeOff
+FundamentalsTimeSeriesOptions
+No documentation available
+lang
+merge
+module
+padTimeSeries
+period1
+period2
+region
+type
+FundamentalsTimeSeriesResult
+No documentation available
+FundamentalsTimeSeriesResults
+No documentation available
+modules/historical
+Historical data module for retrieving price history, dividends, and stock splits.
+historical
+Get historical price data for a symbol.
+HistoricalDividendsResult
+Array of dividend payment records
+HistoricalHistoryResult
+Array of historical price data points
+HistoricalOptions
+Configuration options for historical data requests.
+events
+includeAdjustedClose
+interval
+period1
+period2
+HistoricalOptionsEventsDividends
+Historical options specifically for dividend data
+events
+HistoricalOptionsEventsHistory
+Historical options specifically for price history
+events
+HistoricalOptionsEventsSplit
+Historical options specifically for stock split data
+events
+HistoricalResult
+Union type for all possible historical data results
+HistoricalRowDividend
+Dividend payment record.
+date
+dividends
+HistoricalRowHistory
+Historical price data for a single trading day.
+adjClose
+close
+date
+high
+low
+open
+volume
+HistoricalRowStockSplit
+Stock split record.
+date
+stockSplits
+HistoricalStockSplitsResult
+Array of stock split records
+modules/insights
+Analyst insights, research reports, and company analysis.
+insights
+Get insights with validation enabled.
+InsightsCompanySnapshot
+No documentation available
+company
+sector
+sectorInfo
+InsightsDirection
+No documentation available
+InsightsEvent
+No documentation available
+endDate
+eventType
+imageUrl
+pricePeriod
+startDate
+tradeType
+tradingHorizon
+InsightsInstrumentInfo
+No documentation available
+keyTechnicals
+technicalEvents
+valuation
+InsightsOptions
+Configuration options for insights requests.
+lang
+region
+reportsCount
+InsightsOutlook
+No documentation available
+direction
+indexDirection
+indexScore
+indexScoreDescription
+score
+scoreDescription
+sectorDirection
+sectorScore
+sectorScoreDescription
+stateDescription
+InsightsReport
+No documentation available
+headHtml
+id
+investmentRating
+provider
+reportDate
+reportTitle
+reportType
+targetPrice
+targetPriceStatus
+tickers
+title
+InsightsResearchReport
+No documentation available
+investmentRating
+provider
+reportDate
+reportId
+summary
+title
+InsightsResult
+Complete insights result for a financial instrument.
+companySnapshot
+events
+instrumentInfo
+recommendation
+reports
+secReports
+sigDevs
+symbol
+upsell
+upsellSearchDD
+InsightsSecReport
+No documentation available
+description
+filingDate
+formType
+id
+snapshotUrl
+title
+type
+InsightsSigDev
+Significant development item.
+date
+headline
+InsightsUpsell
+No documentation available
+companyName
+msBearishSummary
+msBullishBearishSummariesPublishDate
+msBullishSummary
+upsellReportType
+modules/options
+Options module for retrieving options chain data including calls, puts, and Greeks.
+CallOrPut
+No documentation available
+ask
+bid
+change
+contractSize
+contractSymbol
+currency
+expiration
+impliedVolatility
+inTheMoney
+lastPrice
+lastTradeDate
+openInterest
+percentChange
+strike
+volume
+Option
+No documentation available
+calls
+expirationDate
+hasMiniOptions
+puts
+options
+Get options chain data including calls, puts, and Greeks (delta, gamma, etc).
+OptionsOptions
+No documentation available
+date
+formatted
+lang
+region
+OptionsResult
+No documentation available
+expirationDates
+hasMiniOptions
+options
+quote
+strikes
+underlyingSymbol
+modules/quote
+Quote module for retrieving real-time or near real-time quote data.
+Quote
+Union type for all possible quote data structures.
+quote
+Get quote data for multiple symbols returning an array.
+QuoteAltSymbol
+No documentation available
+expireDate
+expireIsoDate
+quoteType
+typeDisp
+underlyingExchangeSymbol
+QuoteBase
+Base interface for all quote data containing common fields across all asset types.
+ask
+askSize
+averageAnalystRating
+averageDailyVolume10Day
+averageDailyVolume3Month
+beta
+bid
+bidSize
+bookValue
+companyLogoUrl
+corporateActions
+cryptoTradeable
+currency
+customPriceAlertConfidence
+displayName
+dividendDate
+earningsCallTimestampEnd
+earningsCallTimestampStart
+earningsTimestamp
+earningsTimestampEnd
+earningsTimestampStart
+epsCurrentYear
+epsForward
+epsTrailingTwelveMonths
+esgPopulated
+exchange
+exchangeDataDelayedBy
+exchangeTimezoneName
+exchangeTimezoneShortName
+fiftyDayAverage
+fiftyDayAverageChange
+fiftyDayAverageChangePercent
+fiftyTwoWeekChangePercent
+fiftyTwoWeekHigh
+fiftyTwoWeekHighChange
+fiftyTwoWeekHighChangePercent
+fiftyTwoWeekLow
+fiftyTwoWeekLowChange
+fiftyTwoWeekLowChangePercent
+fiftyTwoWeekRange
+financialCurrency
+firstTradeDateMilliseconds
+forwardPE
+fullExchangeName
+gmtOffSetMilliseconds
+hasPrePostMarketData
+ipoExpectedDate
+isEarningsDateEstimate
+language
+logoUrl
+longName
+market
+marketCap
+marketState
+messageBoardId
+nameChangeDate
+newListingDate
+openInterest
+pageViewGrowthWeekly
+postMarketChange
+postMarketChangePercent
+postMarketPrice
+postMarketTime
+preMarketChange
+preMarketChangePercent
+preMarketPrice
+preMarketTime
+prevName
+priceEpsCurrentYear
+priceHint
+priceToBook
+quoteSourceName
+quoteType
+region
+regularMarketChange
+regularMarketChangePercent
+regularMarketDayHigh
+regularMarketDayLow
+regularMarketDayRange
+regularMarketOpen
+regularMarketPreviousClose
+regularMarketPrice
+regularMarketTime
+regularMarketVolume
+sharesOutstanding
+shortName
+sourceInterval
+symbol
+tradeable
+trailingAnnualDividendRate
+trailingAnnualDividendYield
+trailingPE
+trailingThreeMonthNavReturns
+trailingThreeMonthReturns
+triggerable
+twoHundredDayAverage
+twoHundredDayAverageChange
+twoHundredDayAverageChangePercent
+typeDisp
+underlyingSymbol
+ytdReturn
+QuoteCryptoCurrency
+Cryptocurrency quote data with specific fields for digital assets.
+circulatingSupply
+coinImageUrl
+coinMarketCapLink
+fromCurrency
+lastMarket
+logoUrl
+quoteType
+startDate
+toCurrency
+volume24Hr
+volumeAllCurrencies
+QuoteCurrency
+Currency quote data for forex pairs.
+quoteType
+QuoteECNQuote
+Electronic Communication Network quote, i.e. a a price coming from an ECN/ATS rather than the primary exchange book. ECNs are electronic venues that match orders directly (and are heavily used for pre- and post-market trading).
+quoteType
+QuoteEquity
+Stock/equity quote data with company-specific metrics.
+dividendRate
+dividendYield
+quoteType
+QuoteEtf
+ETF (Exchange-Traded Fund) quote data with fund-specific metrics.
+dividendYield
+netAssets
+netExpenseRatio
+quoteType
+QuoteField
+All possible field names available in quote data
+QuoteFuture
+Futures contract quote data.
+contractSymbol
+expireDate
+expireIsoDate
+headSymbolAsString
+quoteType
+underlyingExchangeSymbol
+QuoteIndex
+Market index quote data.
+quoteType
+QuoteMoneyMarket
+Money market fund quote data.
+netAssets
+quoteType
+typeDisp
+QuoteMutualfund
+Mutual fund quote data.
+dividendRate
+dividendYield
+hasPrePostMarketData
+quoteType
+QuoteOption
+Options contract quote data with options-specific fields.
+expireDate
+expireIsoDate
+openInterest
+quoteType
+strike
+underlyingSymbol
+QuoteOptions
+Configuration options for quote requests.
+fields
+lang
+region
+return
+QuoteOptionsWithReturnArray
+Quote options with array return type (default)
+return
+QuoteOptionsWithReturnMap
+Quote options with Map return type
+return
+QuoteOptionsWithReturnObject
+Quote options with object return type
+return
+QuoteResponseArray
+Quote result as an array (default return type)
+QuoteResponseMap
+Quote result as a Map with symbol as key
+QuoteResponseObject
+Quote result as an object with symbol as property name
+ResultType
+Return format options for quote results
+modules/quoteSummary
+Quote Summary module for retrieving comprehensive financial data.
+Action
+No documentation available
+AssetProfile
+No documentation available
+address1
+address2
+address3
+auditRisk
+boardRisk
+city
+companyOfficers
+compensationAsOfEpochDate
+compensationRisk
+country
+description
+executiveTeam
+fax
+fullTimeEmployees
+governanceEpochDate
+industry
+industryDisp
+industryKey
+industrySymbol
+irWebsite
+longBusinessSummary
+maxAge
+name
+overallRisk
+phone
+sector
+sectorDisp
+sectorKey
+shareHolderRightsRisk
+startDate
+state
+twitter
+website
+zip
+BalanceSheetHistory
+No documentation available
+balanceSheetStatements
+maxAge
+BalanceSheetStatement
+No documentation available
+endDate
+maxAge
+CalendarEvents
+No documentation available
+dividendDate
+earnings
+exDividendDate
+maxAge
+CalendarEventsEarnings
+No documentation available
+earningsAverage
+earningsCallDate
+earningsDate
+earningsHigh
+earningsLow
+isEarningsDateEstimate
+revenueAverage
+revenueHigh
+revenueLow
+CashflowStatement
+No documentation available
+endDate
+maxAge
+netIncome
+CashflowStatementHistory
+No documentation available
+cashflowStatements
+maxAge
+CompanyOfficer
+No documentation available
+age
+exercisedValue
+fiscalYear
+maxAge
+name
+title
+totalPay
+unexercisedValue
+yearBorn
+DefaultKeyStatistics
+No documentation available
+52WeekChange
+SandP52WeekChange
+annualHoldingsTurnover
+annualReportExpenseRatio
+beta
+beta3Year
+bookValue
+category
+dateShortInterest
+earningsQuarterlyGrowth
+enterpriseToEbitda
+enterpriseToRevenue
+enterpriseValue
+fiveYearAverageReturn
+floatShares
+forwardEps
+forwardPE
+fundFamily
+fundInceptionDate
+heldPercentInsiders
+heldPercentInstitutions
+impliedSharesOutstanding
+lastCapGain
+lastDividendDate
+lastDividendValue
+lastFiscalYearEnd
+lastSplitDate
+lastSplitFactor
+latestShareClass
+leadInvestor
+legalType
+maxAge
+morningStarOverallRating
+morningStarRiskRating
+mostRecentQuarter
+netIncomeToCommon
+nextFiscalYearEnd
+pegRatio
+priceHint
+priceToBook
+profitMargins
+sharesOutstanding
+sharesPercentSharesOut
+sharesShort
+sharesShortPreviousMonthDate
+sharesShortPriorMonth
+shortPercentOfFloat
+shortRatio
+threeYearAverageReturn
+totalAssets
+trailingEps
+yield
+ytdReturn
+EarningsChart
+No documentation available
+currentQuarterEstimate
+currentQuarterEstimateDate
+currentQuarterEstimateYear
+earningsDate
+isEarningsDateEstimate
+quarterly
+EarningsChartQuarterly
+No documentation available
+actual
+date
+estimate
+EarningsEstimate
+No documentation available
+avg
+earningsCurrency
+growth
+high
+low
+numberOfAnalysts
+yearAgoEps
+EarningsHistory
+No documentation available
+history
+maxAge
+EarningsHistoryHistory
+No documentation available
+currency
+epsActual
+epsDifference
+epsEstimate
+maxAge
+period
+quarter
+surprisePercent
+EarningsTrend
+No documentation available
+maxAge
+trend
+EarningsTrendTrend
+No documentation available
+earningsEstimate
+endDate
+epsRevisions
+epsTrend
+growth
+maxAge
+period
+revenueEstimate
+EpsRevisions
+No documentation available
+downLast30days
+downLast7Days
+downLast90days
+epsRevisionsCurrency
+upLast30days
+upLast7days
+upLast90days
+EpsTrend
+No documentation available
+30daysAgo
+60daysAgo
+7daysAgo
+90daysAgo
+current
+epsTrendCurrency
+Estimate
+No documentation available
+growth
+period
+Filing
+No documentation available
+date
+edgarUrl
+epochDate
+exhibits
+maxAge
+title
+type
+url
+FinancialData
+No documentation available
+currentPrice
+currentRatio
+debtToEquity
+earningsGrowth
+ebitda
+ebitdaMargins
+financialCurrency
+freeCashflow
+grossMargins
+grossProfits
+maxAge
+numberOfAnalystOpinions
+operatingCashflow
+operatingMargins
+profitMargins
+quickRatio
+recommendationKey
+recommendationMean
+returnOnAssets
+returnOnEquity
+revenueGrowth
+revenuePerShare
+targetHighPrice
+targetLowPrice
+targetMeanPrice
+targetMedianPrice
+totalCash
+totalCashPerShare
+totalDebt
+totalRevenue
+FinancialsChart
+No documentation available
+quarterly
+yearly
+FinancialsChartQuarterly
+No documentation available
+date
+earnings
+revenue
+FundPerformance
+No documentation available
+annualTotalReturns
+fundCategoryName
+loadAdjustedReturns
+maxAge
+pastQuarterlyReturns
+performanceOverview
+performanceOverviewCat
+rankInCategory
+riskOverviewStatistics
+riskOverviewStatisticsCat
+trailingReturns
+trailingReturnsCat
+trailingReturnsNav
+FundPerformancePerformanceOverview
+No documentation available
+asOfDate
+bestOneYrTotalReturn
+bestThreeYrTotalReturn
+fiveYrAvgReturnPct
+morningStarReturnRating
+numYearsDown
+numYearsUp
+oneYearTotalReturn
+threeYearTotalReturn
+worstOneYrTotalReturn
+worstThreeYrTotalReturn
+ytdReturnPct
+FundPerformancePerformanceOverviewCat
+No documentation available
+fiveYrAvgReturnPct
+oneYearTotalReturn
+threeYearTotalReturn
+ytdReturnPct
+FundPerformanceReturns
+No documentation available
+returns
+returnsCat
+FundPerformanceReturnsRow
+No documentation available
+annualValue
+q1
+q2
+q3
+q4
+year
+FundPerformanceRiskOverviewStats
+No documentation available
+riskRating
+riskStatistics
+FundPerformanceRiskOverviewStatsCat
+No documentation available
+riskStatisticsCat
+FundPerformanceRiskOverviewStatsRow
+No documentation available
+alpha
+beta
+meanAnnualReturn
+rSquared
+sharpeRatio
+stdDev
+treynorRatio
+year
+FundPerformanceTrailingReturns
+No documentation available
+lastBearMkt
+lastBullMkt
+FundProfile
+No documentation available
+brokerages
+categoryName
+family
+feesExpensesInvestment
+feesExpensesInvestmentCat
+initAipInvestment
+initInvestment
+initIraInvestment
+legalType
+managementInfo
+maxAge
+styleBoxUrl
+subseqAipInvestment
+subseqInvestment
+subseqIraInvestment
+FundProfileBrokerage
+No documentation available
+FundProfileFeesExpensesInvestment
+No documentation available
+annualHoldingsTurnover
+annualReportExpenseRatio
+grossExpRatio
+netExpRatio
+projectionValues
+totalNetAssets
+FundProfileFeesExpensesInvestmentCat
+No documentation available
+projectionValuesCat
+FundProfileManagementInfo
+No documentation available
+managerBio
+managerName
+startdate
+Grade
+No documentation available
+Holder
+No documentation available
+latestTransDate
+maxAge
+name
+positionDirect
+positionDirectDate
+positionIndirect
+positionIndirectDate
+positionSummaryDate
+relation
+transactionDescription
+url
+Holders
+No documentation available
+holders
+maxAge
+IncomeStatementHistory
+No documentation available
+incomeStatementHistory
+maxAge
+IncomeStatementHistoryElement
+No documentation available
+costOfRevenue
+discontinuedOperations
+ebit
+effectOfAccountingCharges
+endDate
+extraordinaryItems
+grossProfit
+incomeBeforeTax
+incomeTaxExpense
+interestExpense
+maxAge
+minorityInterest
+netIncome
+netIncomeApplicableToCommonShares
+netIncomeFromContinuingOps
+nonRecurring
+operatingIncome
+otherItems
+otherOperatingExpenses
+researchDevelopment
+sellingGeneralAdministrative
+totalOperatingExpenses
+totalOtherIncomeExpenseNet
+totalRevenue
+IndexTrend
+No documentation available
+estimates
+maxAge
+peRatio
+pegRatio
+symbol
+InsiderTransactions
+No documentation available
+maxAge
+transactions
+MajorHoldersBreakdown
+No documentation available
+insidersPercentHeld
+institutionsCount
+institutionsFloatPercentHeld
+institutionsPercentHeld
+maxAge
+NetSharePurchaseActivity
+No documentation available
+buyInfoCount
+buyInfoShares
+buyPercentInsiderShares
+maxAge
+netInfoCount
+netInfoShares
+netPercentInsiderShares
+period
+sellInfoCount
+sellInfoShares
+sellPercentInsiderShares
+totalInsiderShares
+Ownership
+No documentation available
+maxAge
+ownershipList
+OwnershipEnum
+No documentation available
+OwnershipList
+No documentation available
+maxAge
+organization
+pctChange
+pctHeld
+position
+reportDate
+value
+PeriodRange
+No documentation available
+asOfDate
+fiveYear
+oneMonth
+oneYear
+tenYear
+threeMonth
+threeYear
+ytd
+Price
+No documentation available
+averageDailyVolume10Day
+averageDailyVolume3Month
+circulatingSupply
+currency
+currencySymbol
+exchange
+exchangeDataDelayedBy
+exchangeName
+expireDate
+fromCurrency
+lastMarket
+longName
+marketCap
+marketState
+maxAge
+openInterest
+postMarketChange
+postMarketChangePercent
+postMarketPrice
+postMarketSource
+postMarketTime
+preMarketChange
+preMarketChangePercent
+preMarketPrice
+preMarketSource
+preMarketTime
+priceHint
+quoteSourceName
+quoteType
+regularMarketChange
+regularMarketChangePercent
+regularMarketDayHigh
+regularMarketDayLow
+regularMarketOpen
+regularMarketPreviousClose
+regularMarketPrice
+regularMarketSource
+regularMarketTime
+regularMarketVolume
+shortName
+symbol
+toCurrency
+underlyingSymbol
+volume24Hr
+volumeAllCurrencies
+quoteSummary
+Get comprehensive quote summary data with validation enabled.
+quoteSummary_modules
+Available quote summary modules for requesting specific data.
+QuoteSummaryEarnings
+No documentation available
+earningsChart
+financialCurrency
+financialsChart
+maxAge
+QuoteSummaryModules
+Type union of all available quote summary module names. Use this to specify which modules to include in your request.
+QuoteSummaryOptions
+Configuration options for quote summary requests.
+formatted
+modules
+QuoteSummaryResult
+No documentation available
+assetProfile
+balanceSheetHistory
+balanceSheetHistoryQuarterly
+calendarEvents
+cashflowStatementHistory
+cashflowStatementHistoryQuarterly
+defaultKeyStatistics
+earnings
+earningsHistory
+earningsTrend
+financialData
+fundOwnership
+fundPerformance
+fundProfile
+incomeStatementHistory
+incomeStatementHistoryQuarterly
+indexTrend
+industryTrend
+insiderHolders
+insiderTransactions
+institutionOwnership
+majorDirectHolders
+majorHoldersBreakdown
+netSharePurchaseActivity
+price
+quoteType
+recommendationTrend
+secFilings
+sectorTrend
+summaryDetail
+summaryProfile
+topHoldings
+upgradeDowngradeHistory
+QuoteType
+No documentation available
+exchange
+firstTradeDateEpochUtc
+gmtOffSetMilliseconds
+longName
+maxAge
+messageBoardId
+quoteType
+shortName
+symbol
+timeZoneFullName
+timeZoneShortName
+underlyingSymbol
+uuid
+RecommendationTrend
+No documentation available
+maxAge
+trend
+RecommendationTrendTrend
+No documentation available
+buy
+hold
+period
+sell
+strongBuy
+strongSell
+Relation
+No documentation available
+RevenueEstimate
+No documentation available
+avg
+growth
+high
+low
+numberOfAnalysts
+revenueCurrency
+yearAgoRevenue
+SECFilings
+No documentation available
+filings
+maxAge
+SummaryDetail
+No documentation available
+algorithm
+ask
+askSize
+averageDailyVolume10Day
+averageMaturity
+averageVolume
+averageVolume10days
+beta
+bid
+bidSize
+circulatingSupply
+coinMarketCapLink
+currency
+dayHigh
+dayLow
+dividendRate
+dividendYield
+exDividendDate
+expireDate
+fiftyDayAverage
+fiftyTwoWeekHigh
+fiftyTwoWeekLow
+fiveYearAvgDividendYield
+forwardPE
+fromCurrency
+lastMarket
+marketCap
+maxAge
+navPrice
+open
+openInterest
+payoutRatio
+previousClose
+priceHint
+priceToSalesTrailing12Months
+regularMarketDayHigh
+regularMarketDayLow
+regularMarketOpen
+regularMarketPreviousClose
+regularMarketVolume
+startDate
+toCurrency
+totalAssets
+tradeable
+trailingAnnualDividendRate
+trailingAnnualDividendYield
+trailingPE
+twoHundredDayAverage
+volume
+volume24Hr
+volumeAllCurrencies
+yield
+ytdReturn
+SummaryProfile
+No documentation available
+address1
+address2
+address3
+city
+companyOfficers
+country
+description
+executiveTeam
+fax
+fullTimeEmployees
+industry
+industryDisp
+industryKey
+irWebsite
+longBusinessSummary
+maxAge
+name
+phone
+sector
+sectorDisp
+sectorKey
+startDate
+state
+twitter
+website
+zip
+TopHoldings
+No documentation available
+bondHoldings
+bondPosition
+bondRatings
+cashPosition
+convertiblePosition
+equityHoldings
+holdings
+maxAge
+otherPosition
+preferredPosition
+sectorWeightings
+stockPosition
+TopHoldingsBondRating
+No documentation available
+a
+aa
+aaa
+b
+bb
+bbb
+below_b
+other
+us_government
+TopHoldingsEquityHoldings
+No documentation available
+medianMarketCap
+medianMarketCapCat
+priceToBook
+priceToBookCat
+priceToCashflow
+priceToCashflowCat
+priceToEarnings
+priceToEarningsCat
+priceToSales
+priceToSalesCat
+threeYearEarningsGrowth
+threeYearEarningsGrowthCat
+TopHoldingsHolding
+No documentation available
+holdingName
+holdingPercent
+symbol
+TopHoldingsSectorWeighting
+No documentation available
+basic_materials
+communication_services
+consumer_cyclical
+consumer_defensive
+energy
+financial_services
+healthcare
+industrials
+realestate
+technology
+utilities
+Transaction
+No documentation available
+filerName
+filerRelation
+filerUrl
+maxAge
+moneyText
+ownership
+shares
+startDate
+transactionText
+value
+Trend
+No documentation available
+estimates
+maxAge
+symbol
+UpgradeDowngradeHistory
+No documentation available
+history
+maxAge
+UpgradeDowngradeHistoryHistory
+No documentation available
+action
+epochGradeDate
+firm
+fromGrade
+toGrade
+Yearly
+No documentation available
+date
+earnings
+revenue
+modules/quoteSummary-iface
+Action
+No documentation available
+AssetProfile
+No documentation available
+address1
+address2
+address3
+auditRisk
+boardRisk
+city
+companyOfficers
+compensationAsOfEpochDate
+compensationRisk
+country
+description
+executiveTeam
+fax
+fullTimeEmployees
+governanceEpochDate
+industry
+industryDisp
+industryKey
+industrySymbol
+irWebsite
+longBusinessSummary
+maxAge
+name
+overallRisk
+phone
+sector
+sectorDisp
+sectorKey
+shareHolderRightsRisk
+startDate
+state
+twitter
+website
+zip
+BalanceSheetHistory
+No documentation available
+balanceSheetStatements
+maxAge
+BalanceSheetStatement
+No documentation available
+endDate
+maxAge
+CalendarEvents
+No documentation available
+dividendDate
+earnings
+exDividendDate
+maxAge
+CalendarEventsEarnings
+No documentation available
+earningsAverage
+earningsCallDate
+earningsDate
+earningsHigh
+earningsLow
+isEarningsDateEstimate
+revenueAverage
+revenueHigh
+revenueLow
+CashflowStatement
+No documentation available
+endDate
+maxAge
+netIncome
+CashflowStatementHistory
+No documentation available
+cashflowStatements
+maxAge
+CompanyOfficer
+No documentation available
+age
+exercisedValue
+fiscalYear
+maxAge
+name
+title
+totalPay
+unexercisedValue
+yearBorn
+DefaultKeyStatistics
+No documentation available
+52WeekChange
+SandP52WeekChange
+annualHoldingsTurnover
+annualReportExpenseRatio
+beta
+beta3Year
+bookValue
+category
+dateShortInterest
+earningsQuarterlyGrowth
+enterpriseToEbitda
+enterpriseToRevenue
+enterpriseValue
+fiveYearAverageReturn
+floatShares
+forwardEps
+forwardPE
+fundFamily
+fundInceptionDate
+heldPercentInsiders
+heldPercentInstitutions
+impliedSharesOutstanding
+lastCapGain
+lastDividendDate
+lastDividendValue
+lastFiscalYearEnd
+lastSplitDate
+lastSplitFactor
+latestShareClass
+leadInvestor
+legalType
+maxAge
+morningStarOverallRating
+morningStarRiskRating
+mostRecentQuarter
+netIncomeToCommon
+nextFiscalYearEnd
+pegRatio
+priceHint
+priceToBook
+profitMargins
+sharesOutstanding
+sharesPercentSharesOut
+sharesShort
+sharesShortPreviousMonthDate
+sharesShortPriorMonth
+shortPercentOfFloat
+shortRatio
+threeYearAverageReturn
+totalAssets
+trailingEps
+yield
+ytdReturn
+EarningsChart
+No documentation available
+currentQuarterEstimate
+currentQuarterEstimateDate
+currentQuarterEstimateYear
+earningsDate
+isEarningsDateEstimate
+quarterly
+EarningsChartQuarterly
+No documentation available
+actual
+date
+estimate
+EarningsEstimate
+No documentation available
+avg
+earningsCurrency
+growth
+high
+low
+numberOfAnalysts
+yearAgoEps
+EarningsHistory
+No documentation available
+history
+maxAge
+EarningsHistoryHistory
+No documentation available
+currency
+epsActual
+epsDifference
+epsEstimate
+maxAge
+period
+quarter
+surprisePercent
+EarningsTrend
+No documentation available
+maxAge
+trend
+EarningsTrendTrend
+No documentation available
+earningsEstimate
+endDate
+epsRevisions
+epsTrend
+growth
+maxAge
+period
+revenueEstimate
+EpsRevisions
+No documentation available
+downLast30days
+downLast7Days
+downLast90days
+epsRevisionsCurrency
+upLast30days
+upLast7days
+upLast90days
+EpsTrend
+No documentation available
+30daysAgo
+60daysAgo
+7daysAgo
+90daysAgo
+current
+epsTrendCurrency
+Estimate
+No documentation available
+growth
+period
+Filing
+No documentation available
+date
+edgarUrl
+epochDate
+exhibits
+maxAge
+title
+type
+url
+FinancialData
+No documentation available
+currentPrice
+currentRatio
+debtToEquity
+earningsGrowth
+ebitda
+ebitdaMargins
+financialCurrency
+freeCashflow
+grossMargins
+grossProfits
+maxAge
+numberOfAnalystOpinions
+operatingCashflow
+operatingMargins
+profitMargins
+quickRatio
+recommendationKey
+recommendationMean
+returnOnAssets
+returnOnEquity
+revenueGrowth
+revenuePerShare
+targetHighPrice
+targetLowPrice
+targetMeanPrice
+targetMedianPrice
+totalCash
+totalCashPerShare
+totalDebt
+totalRevenue
+FinancialsChart
+No documentation available
+quarterly
+yearly
+FinancialsChartQuarterly
+No documentation available
+date
+earnings
+revenue
+FundPerformance
+No documentation available
+annualTotalReturns
+fundCategoryName
+loadAdjustedReturns
+maxAge
+pastQuarterlyReturns
+performanceOverview
+performanceOverviewCat
+rankInCategory
+riskOverviewStatistics
+riskOverviewStatisticsCat
+trailingReturns
+trailingReturnsCat
+trailingReturnsNav
+FundPerformancePerformanceOverview
+No documentation available
+asOfDate
+bestOneYrTotalReturn
+bestThreeYrTotalReturn
+fiveYrAvgReturnPct
+morningStarReturnRating
+numYearsDown
+numYearsUp
+oneYearTotalReturn
+threeYearTotalReturn
+worstOneYrTotalReturn
+worstThreeYrTotalReturn
+ytdReturnPct
+FundPerformancePerformanceOverviewCat
+No documentation available
+fiveYrAvgReturnPct
+oneYearTotalReturn
+threeYearTotalReturn
+ytdReturnPct
+FundPerformanceReturns
+No documentation available
+returns
+returnsCat
+FundPerformanceReturnsRow
+No documentation available
+annualValue
+q1
+q2
+q3
+q4
+year
+FundPerformanceRiskOverviewStats
+No documentation available
+riskRating
+riskStatistics
+FundPerformanceRiskOverviewStatsCat
+No documentation available
+riskStatisticsCat
+FundPerformanceRiskOverviewStatsRow
+No documentation available
+alpha
+beta
+meanAnnualReturn
+rSquared
+sharpeRatio
+stdDev
+treynorRatio
+year
+FundPerformanceTrailingReturns
+No documentation available
+lastBearMkt
+lastBullMkt
+FundProfile
+No documentation available
+brokerages
+categoryName
+family
+feesExpensesInvestment
+feesExpensesInvestmentCat
+initAipInvestment
+initInvestment
+initIraInvestment
+legalType
+managementInfo
+maxAge
+styleBoxUrl
+subseqAipInvestment
+subseqInvestment
+subseqIraInvestment
+FundProfileBrokerage
+No documentation available
+FundProfileFeesExpensesInvestment
+No documentation available
+annualHoldingsTurnover
+annualReportExpenseRatio
+grossExpRatio
+netExpRatio
+projectionValues
+totalNetAssets
+FundProfileFeesExpensesInvestmentCat
+No documentation available
+projectionValuesCat
+FundProfileManagementInfo
+No documentation available
+managerBio
+managerName
+startdate
+Grade
+No documentation available
+Holder
+No documentation available
+latestTransDate
+maxAge
+name
+positionDirect
+positionDirectDate
+positionIndirect
+positionIndirectDate
+positionSummaryDate
+relation
+transactionDescription
+url
+Holders
+No documentation available
+holders
+maxAge
+IncomeStatementHistory
+No documentation available
+incomeStatementHistory
+maxAge
+IncomeStatementHistoryElement
+No documentation available
+costOfRevenue
+discontinuedOperations
+ebit
+effectOfAccountingCharges
+endDate
+extraordinaryItems
+grossProfit
+incomeBeforeTax
+incomeTaxExpense
+interestExpense
+maxAge
+minorityInterest
+netIncome
+netIncomeApplicableToCommonShares
+netIncomeFromContinuingOps
+nonRecurring
+operatingIncome
+otherItems
+otherOperatingExpenses
+researchDevelopment
+sellingGeneralAdministrative
+totalOperatingExpenses
+totalOtherIncomeExpenseNet
+totalRevenue
+IndexTrend
+No documentation available
+estimates
+maxAge
+peRatio
+pegRatio
+symbol
+InsiderTransactions
+No documentation available
+maxAge
+transactions
+MajorHoldersBreakdown
+No documentation available
+insidersPercentHeld
+institutionsCount
+institutionsFloatPercentHeld
+institutionsPercentHeld
+maxAge
+NetSharePurchaseActivity
+No documentation available
+buyInfoCount
+buyInfoShares
+buyPercentInsiderShares
+maxAge
+netInfoCount
+netInfoShares
+netPercentInsiderShares
+period
+sellInfoCount
+sellInfoShares
+sellPercentInsiderShares
+totalInsiderShares
+Ownership
+No documentation available
+maxAge
+ownershipList
+OwnershipEnum
+No documentation available
+OwnershipList
+No documentation available
+maxAge
+organization
+pctChange
+pctHeld
+position
+reportDate
+value
+PeriodRange
+No documentation available
+asOfDate
+fiveYear
+oneMonth
+oneYear
+tenYear
+threeMonth
+threeYear
+ytd
+Price
+No documentation available
+averageDailyVolume10Day
+averageDailyVolume3Month
+circulatingSupply
+currency
+currencySymbol
+exchange
+exchangeDataDelayedBy
+exchangeName
+expireDate
+fromCurrency
+lastMarket
+longName
+marketCap
+marketState
+maxAge
+openInterest
+postMarketChange
+postMarketChangePercent
+postMarketPrice
+postMarketSource
+postMarketTime
+preMarketChange
+preMarketChangePercent
+preMarketPrice
+preMarketSource
+preMarketTime
+priceHint
+quoteSourceName
+quoteType
+regularMarketChange
+regularMarketChangePercent
+regularMarketDayHigh
+regularMarketDayLow
+regularMarketOpen
+regularMarketPreviousClose
+regularMarketPrice
+regularMarketSource
+regularMarketTime
+regularMarketVolume
+shortName
+symbol
+toCurrency
+underlyingSymbol
+volume24Hr
+volumeAllCurrencies
+QuoteSummaryEarnings
+No documentation available
+earningsChart
+financialCurrency
+financialsChart
+maxAge
+QuoteSummaryResult
+No documentation available
+assetProfile
+balanceSheetHistory
+balanceSheetHistoryQuarterly
+calendarEvents
+cashflowStatementHistory
+cashflowStatementHistoryQuarterly
+defaultKeyStatistics
+earnings
+earningsHistory
+earningsTrend
+financialData
+fundOwnership
+fundPerformance
+fundProfile
+incomeStatementHistory
+incomeStatementHistoryQuarterly
+indexTrend
+industryTrend
+insiderHolders
+insiderTransactions
+institutionOwnership
+majorDirectHolders
+majorHoldersBreakdown
+netSharePurchaseActivity
+price
+quoteType
+recommendationTrend
+secFilings
+sectorTrend
+summaryDetail
+summaryProfile
+topHoldings
+upgradeDowngradeHistory
+QuoteType
+No documentation available
+exchange
+firstTradeDateEpochUtc
+gmtOffSetMilliseconds
+longName
+maxAge
+messageBoardId
+quoteType
+shortName
+symbol
+timeZoneFullName
+timeZoneShortName
+underlyingSymbol
+uuid
+RecommendationTrend
+No documentation available
+maxAge
+trend
+RecommendationTrendTrend
+No documentation available
+buy
+hold
+period
+sell
+strongBuy
+strongSell
+Relation
+No documentation available
+RevenueEstimate
+No documentation available
+avg
+growth
+high
+low
+numberOfAnalysts
+revenueCurrency
+yearAgoRevenue
+SECFilings
+No documentation available
+filings
+maxAge
+SummaryDetail
+No documentation available
+algorithm
+ask
+askSize
+averageDailyVolume10Day
+averageMaturity
+averageVolume
+averageVolume10days
+beta
+bid
+bidSize
+circulatingSupply
+coinMarketCapLink
+currency
+dayHigh
+dayLow
+dividendRate
+dividendYield
+exDividendDate
+expireDate
+fiftyDayAverage
+fiftyTwoWeekHigh
+fiftyTwoWeekLow
+fiveYearAvgDividendYield
+forwardPE
+fromCurrency
+lastMarket
+marketCap
+maxAge
+navPrice
+open
+openInterest
+payoutRatio
+previousClose
+priceHint
+priceToSalesTrailing12Months
+regularMarketDayHigh
+regularMarketDayLow
+regularMarketOpen
+regularMarketPreviousClose
+regularMarketVolume
+startDate
+toCurrency
+totalAssets
+tradeable
+trailingAnnualDividendRate
+trailingAnnualDividendYield
+trailingPE
+twoHundredDayAverage
+volume
+volume24Hr
+volumeAllCurrencies
+yield
+ytdReturn
+SummaryProfile
+No documentation available
+address1
+address2
+address3
+city
+companyOfficers
+country
+description
+executiveTeam
+fax
+fullTimeEmployees
+industry
+industryDisp
+industryKey
+irWebsite
+longBusinessSummary
+maxAge
+name
+phone
+sector
+sectorDisp
+sectorKey
+startDate
+state
+twitter
+website
+zip
+TopHoldings
+No documentation available
+bondHoldings
+bondPosition
+bondRatings
+cashPosition
+convertiblePosition
+equityHoldings
+holdings
+maxAge
+otherPosition
+preferredPosition
+sectorWeightings
+stockPosition
+TopHoldingsBondRating
+No documentation available
+a
+aa
+aaa
+b
+bb
+bbb
+below_b
+other
+us_government
+TopHoldingsEquityHoldings
+No documentation available
+medianMarketCap
+medianMarketCapCat
+priceToBook
+priceToBookCat
+priceToCashflow
+priceToCashflowCat
+priceToEarnings
+priceToEarningsCat
+priceToSales
+priceToSalesCat
+threeYearEarningsGrowth
+threeYearEarningsGrowthCat
+TopHoldingsHolding
+No documentation available
+holdingName
+holdingPercent
+symbol
+TopHoldingsSectorWeighting
+No documentation available
+basic_materials
+communication_services
+consumer_cyclical
+consumer_defensive
+energy
+financial_services
+healthcare
+industrials
+realestate
+technology
+utilities
+Transaction
+No documentation available
+filerName
+filerRelation
+filerUrl
+maxAge
+moneyText
+ownership
+shares
+startDate
+transactionText
+value
+Trend
+No documentation available
+estimates
+maxAge
+symbol
+UpgradeDowngradeHistory
+No documentation available
+history
+maxAge
+UpgradeDowngradeHistoryHistory
+No documentation available
+action
+epochGradeDate
+firm
+fromGrade
+toGrade
+Yearly
+No documentation available
+date
+earnings
+revenue
+modules/recommendationsBySymbol
+Recommendations by Symbol module for finding related and similar stocks.
+recommendationsBySymbol
+Given a symbol, return recommendations for finding related and similar stocks.
+RecommendationsBySymbolOptions
+No documentation available
+RecommendationsBySymbolResponse
+No documentation available
+recommendedSymbols
+symbol
+RecommendationsBySymbolResponseArray
+No documentation available
+modules/screener
+Screener module for advanced stock screening and filtering with predefined strategies.
+PredefinedScreenerModules
+Predefined stock screener modules for common screening strategies.
+screener
+Advanced stock screening and filtering with predefined strategies (e.g. daily gainers, etc)
+ScreenerCriteriaFieldsFund
+No documentation available
+ScreenerCriteriaMeta
+No documentation available
+criteria
+offset
+quoteType
+size
+sortField
+sortType
+topOperator
+ScreenerCriterum
+No documentation available
+dependentValues
+field
+labelsSelected
+operators
+subField
+values
+ScreenerOptions
+No documentation available
+count
+lang
+region
+scrIds
+ScreenerQuote
+No documentation available
+annualReturnNavY3
+annualReturnNavY5
+ask
+askSize
+averageAnalystRating
+averageDailyVolume10Day
+averageDailyVolume3Month
+bid
+bidSize
+bookValue
+corporateActions
+cryptoTradeable
+currency
+customPriceAlertConfidence
+displayName
+dividendDate
+dividendRate
+dividendYield
+earningsCallTimestampEnd
+earningsCallTimestampStart
+earningsTimestamp
+earningsTimestampEnd
+earningsTimestampStart
+epsCurrentYear
+epsForward
+epsTrailingTwelveMonths
+esgPopulated
+exchange
+exchangeDataDelayedBy
+exchangeTimezoneName
+exchangeTimezoneShortName
+fiftyDayAverage
+fiftyDayAverageChange
+fiftyDayAverageChangePercent
+fiftyTwoWeekChangePercent
+fiftyTwoWeekHigh
+fiftyTwoWeekHighChange
+fiftyTwoWeekHighChangePercent
+fiftyTwoWeekLow
+fiftyTwoWeekLowChange
+fiftyTwoWeekLowChangePercent
+fiftyTwoWeekRange
+financialCurrency
+firstTradeDateMilliseconds
+forwardPE
+fullExchangeName
+gmtOffSetMilliseconds
+hasPrePostMarketData
+ipoExpectedDate
+isEarningsDateEstimate
+language
+lastClosePriceToNNWCPerShare
+lastCloseTevEbitLtm
+longName
+market
+marketCap
+marketState
+messageBoardId
+nameChangeDate
+netAssets
+netExpenseRatio
+peTTM
+postMarketChange
+postMarketChangePercent
+postMarketPrice
+postMarketTime
+preMarketChange
+preMarketChangePercent
+preMarketPrice
+preMarketTime
+prevName
+priceEpsCurrentYear
+priceHint
+priceToBook
+quoteSourceName
+quoteType
+region
+regularMarketChange
+regularMarketChangePercent
+regularMarketDayHigh
+regularMarketDayLow
+regularMarketDayRange
+regularMarketOpen
+regularMarketPreviousClose
+regularMarketPrice
+regularMarketTime
+regularMarketVolume
+sharesOutstanding
+shortName
+sourceInterval
+symbol
+tradeable
+trailingAnnualDividendRate
+trailingAnnualDividendYield
+trailingPE
+trailingThreeMonthReturns
+triggerable
+twoHundredDayAverage
+twoHundredDayAverageChange
+twoHundredDayAverageChangePercent
+typeDisp
+yieldTTM
+ytdReturn
+ScreenerResult
+No documentation available
+ScreenerResultAggressiveSmallCaps
+No documentation available
+canonicalName
+criteriaMeta
+ScreenerResultBase
+No documentation available
+canonicalName
+count
+creationDate
+criteriaMeta
+description
+iconUrl
+id
+isPremium
+lastUpdated
+predefinedScr
+quotes
+rawCriteria
+start
+title
+total
+useRecords
+versionId
+ScreenerResultConservativeForeignFunds
+No documentation available
+canonicalName
+criteriaMeta
+ScreenerResultDayGainers
+No documentation available
+canonicalName
+criteriaMeta
+ScreenerResultDayLosers
+No documentation available
+canonicalName
+criteriaMeta
+ScreenerResultGrowthTechnologyStocks
+No documentation available
+canonicalName
+criteriaMeta
+ScreenerResultHighYieldBond
+No documentation available
+canonicalName
+criteriaMeta
+ScreenerResultMostActives
+No documentation available
+canonicalName
+criteriaMeta
+ScreenerResultMostShortedStocks
+No documentation available
+canonicalName
+criteriaMeta
+ScreenerResultPortfolioAnchors
+No documentation available
+canonicalName
+criteriaMeta
+ScreenerResultSmallCapGainers
+No documentation available
+canonicalName
+criteriaMeta
+ScreenerResultSolidLargeGrowthFunds
+No documentation available
+canonicalName
+criteriaMeta
+ScreenerResultSolidMidcapGrowthFunds
+No documentation available
+canonicalName
+criteriaMeta
+ScreenerResultTopMutualFunds
+No documentation available
+canonicalName
+criteriaMeta
+ScreenerResultUndervaluedGrowthStocks
+No documentation available
+canonicalName
+criteriaMeta
+ScreenerResultUndervaluedLargeCaps
+No documentation available
+canonicalName
+criteriaMeta
+modules/search
+Search module for finding financial instruments and related information.
+search
+Search for financial instruments with validation enabled.
+SearchNews
+No documentation available
+link
+providerPublishTime
+publisher
+relatedTickers
+thumbnail
+title
+type
+uuid
+SearchNewsThumbnailResolution
+No documentation available
+height
+tag
+url
+width
+SearchOptions
+Configuration options for search requests.
+enableCb
+enableEnhancedTrivialQuery
+enableFuzzyQuery
+enableNavLinks
+lang
+multiQuoteQueryId
+newsCount
+newsQueryId
+quotesCount
+quotesQueryId
+region
+SearchQuoteNonYahoo
+No documentation available
+index
+isYahooFinance
+name
+permalink
+SearchQuoteYahoo
+Base interface for all Yahoo Finance search quote results.
+dispSecIndFlag
+exchDisp
+exchange
+index
+industry
+isYahooFinance
+longname
+nameChangeDate
+newListingDate
+prevName
+score
+sector
+shortname
+symbol
+SearchQuoteYahooCryptocurrency
+No documentation available
+quoteType
+typeDisp
+SearchQuoteYahooCurrency
+No documentation available
+quoteType
+typeDisp
+SearchQuoteYahooEquity
+No documentation available
+industryDisp
+quoteType
+sectorDisp
+typeDisp
+SearchQuoteYahooETF
+No documentation available
+quoteType
+typeDisp
+SearchQuoteYahooFund
+No documentation available
+quoteType
+typeDisp
+SearchQuoteYahooFuture
+No documentation available
+quoteType
+typeDisp
+SearchQuoteYahooIndex
+No documentation available
+quoteType
+typeDisp
+SearchQuoteYahooMoneyMarket
+No documentation available
+quoteType
+typeDisp
+SearchQuoteYahooOption
+No documentation available
+quoteType
+typeDisp
+SearchResult
+Complete search result containing quotes, news, and other information.
+count
+culturalAssets
+explains
+lists
+nav
+news
+quotes
+researchReports
+screenerFieldResults
+timeTakenForAlgowatchlist
+timeTakenForCrunchbase
+timeTakenForCulturalAssets
+timeTakenForNav
+timeTakenForNews
+timeTakenForPredefinedScreener
+timeTakenForQuotes
+timeTakenForResearchReports
+timeTakenForScreenerField
+timeTakenForSearchLists
+totalTime
+modules/trendingSymbols
+Trending Symbols module for retrieving symbols that are currently trending in a specific region.
+TrendingSymbol
+Individual trending symbol information.
+symbol
+trendingSymbols
+Get trending symbols with validation enabled.
+TrendingSymbolsOptions
+Configuration options for trending symbols requests.
+count
+lang
+region
+TrendingSymbolsResult
+Complete result from trending symbols request.
+count
+jobTimestamp
+quotes
+startInterval
+other/quoteCombine
+Utility function will debounce multiple calls and combine them into a single quote call, i.e. you'll call quoteCombine() many times, and 50ms (default) after the last call, quote() will be called once so that only a single HTTP request is sent to collect the data for all symbols.
+defaultOptions
+quoteCombine defaults. Override with new Yahoo Finance({ quoteCombine: options }).
+quoteCombine
+Debounce multiple calls into a single quote() network request.
+QuoteCombineOptions
+Pass as new YahooFinance({ quoteCombine: options }) to override the defaults.
+debounceTime
+maxSymbolsPerRequest

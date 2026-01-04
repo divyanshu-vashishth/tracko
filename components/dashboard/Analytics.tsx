@@ -1,56 +1,112 @@
+"use client"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { LineChart, Line, AreaChart, Area, PieChart, Pie, Cell, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer } from "recharts";
+import { useQuery, useAction } from "convex/react";
+import { api } from "@/convex/_generated/api";
+import { useEffect, useState, useMemo } from "react";
 
-const performanceData = [
-  { date: "Jan", value: 35000, benchmark: 33000 },
-  { date: "Feb", value: 38000, benchmark: 35000 },
-  { date: "Mar", value: 36500, benchmark: 36000 },
-  { date: "Apr", value: 40000, benchmark: 38000 },
-  { date: "May", value: 42500, benchmark: 39500 },
-  { date: "Jun", value: 45000, benchmark: 42000 },
-  { date: "Jul", value: 43800, benchmark: 43000 },
-  { date: "Aug", value: 46200, benchmark: 44500 },
-  { date: "Sep", value: 47500, benchmark: 46000 },
-  { date: "Oct", value: 46800, benchmark: 45500 },
-  { date: "Nov", value: 48200, benchmark: 47000 },
-  { date: "Dec", value: 48642, benchmark: 47800 },
-];
-
-const allocationData = [
-  { name: "Technology", value: 35, color: "#3b82f6" },
-  { name: "Healthcare", value: 20, color: "#10b981" },
-  { name: "Finance", value: 18, color: "#f59e0b" },
-  { name: "Consumer", value: 15, color: "#8b5cf6" },
-  { name: "Energy", value: 8, color: "#ef4444" },
-  { name: "Other", value: 4, color: "#6b7280" },
-];
-
-const monthlyReturns = [
-  { month: "Jan", return: 5.2 },
-  { month: "Feb", return: 8.6 },
-  { month: "Mar", return: -3.9 },
-  { month: "Apr", return: 9.6 },
-  { month: "May", return: 6.3 },
-  { month: "Jun", return: 5.9 },
-  { month: "Jul", return: -2.7 },
-  { month: "Aug", return: 5.5 },
-  { month: "Sep", return: 2.8 },
-  { month: "Oct", return: -1.5 },
-  { month: "Nov", return: 3.0 },
-  { month: "Dec", return: 0.9 },
-];
-
-const metrics = [
-  { label: "Total Return", value: "+39.0%", description: "Since inception" },
-  { label: "Annual Return", value: "+18.5%", description: "Annualized" },
-  { label: "Sharpe Ratio", value: "1.85", description: "Risk-adjusted return" },
-  { label: "Max Drawdown", value: "-8.2%", description: "Largest peak-to-trough decline" },
-  { label: "Volatility", value: "12.4%", description: "Standard deviation" },
-  { label: "Win Rate", value: "67%", description: "Profitable months" },
-];
+import { formatCurrency } from "@/lib/formatCurrency";
 
 export function Analytics() {
+  const holdings = useQuery(api.portfolios.getHoldings);
+  const getHistory = useAction(api.stocks.getHistoricalPrices);
+  const [historyData, setHistoryData] = useState<Record<string, any[]>>({});
+
+  // 1. Fetch History
+  useEffect(() => {
+    if (holdings && holdings.length > 0) {
+      const symbols = holdings.map((h: any) => h.symbol);
+      const oneYearAgo = new Date();
+      oneYearAgo.setFullYear(oneYearAgo.getFullYear() - 1);
+      const period1 = oneYearAgo.toISOString().split('T')[0];
+
+      getHistory({ symbols, period1, interval: "1d" }).then(setHistoryData);
+    }
+  }, [holdings, getHistory]);
+
+  const portfolioCurrency = holdings && holdings.length > 0 ? (holdings[0].currency || "INR") : "INR";
+
+  // 2. Process Performance Data
+  const performanceData = useMemo(() => {
+    if (!holdings || Object.keys(historyData).length === 0) return [];
+
+    // Find all unique dates (assuming all stocks have similar trading days)
+    // We'll use the first symbol's dates as a baseline
+    const firstSymbol = holdings[0].symbol;
+    const baseDates = historyData[firstSymbol]?.map((d: any) => d.date) || [];
+
+    return baseDates.map((date: any) => {
+       let totalValue = 0;
+       // For this date, sum up value of all holdings
+       holdings.forEach((h: any) => {
+          const stockHistory = historyData[h.symbol];
+          // Find closest date match
+          const dayData = stockHistory?.find((d: any) => d.date.toString().slice(0,10) === date.toString().slice(0,10));
+          if (dayData) {
+              totalValue += dayData.close * h.shares;
+          }
+       });
+       
+       // Simplified benchmark (e.g. just a flat growth or placeholder if we don't fetch SPY)
+       // For a real app, we'd fetch SPY history too.
+       return {
+           date: new Date(date).toLocaleDateString('en-US', { month: 'short', day: 'numeric' }),
+           value: totalValue,
+           // benchmark: totalValue * 0.9 // Placeholder
+       };
+    });
+  }, [holdings, historyData]);
+
+  // 3. Process Allocation Data
+  const allocationData = useMemo(() => {
+    if (!holdings) return [];
+    
+    const sectorMap: Record<string, number> = {};
+    let totalPortfolioValue = 0;
+
+    holdings.forEach((h: any) => {
+        // Use current price from history (last entry) or avgPrice if history missing
+        const lastPrice = historyData[h.symbol]?.[historyData[h.symbol].length - 1]?.close || h.avgPurchasePrice;
+        const val = h.shares * lastPrice;
+        sectorMap[h.sector || "Other"] = (sectorMap[h.sector || "Other"] || 0) + val;
+        totalPortfolioValue += val;
+    });
+
+    const colors = ["#3b82f6", "#10b981", "#f59e0b", "#8b5cf6", "#ef4444", "#6b7280"];
+    
+    return Object.keys(sectorMap).map((sector, index) => ({
+        name: sector,
+        value: Number(((sectorMap[sector] / totalPortfolioValue) * 100).toFixed(1)),
+        color: colors[index % colors.length]
+    }));
+  }, [holdings, historyData]);
+
+  // 4. Monthly Returns (Simplified based on performanceData)
+  const monthlyReturns = useMemo(() => {
+     if (performanceData.length < 30) return [];
+     
+     // Group by month
+     const months: Record<string, { start: number, end: number }> = {};
+     
+     // Note: detailed calculation would require precise start/end of months.
+     // This is a simplified visualization.
+     return []; 
+  }, [performanceData]);
+
+  // Metrics
+  const totalValue = performanceData.length > 0 ? performanceData[performanceData.length - 1].value : 0;
+  const startValue = performanceData.length > 0 ? performanceData[0].value : 0;
+  const totalReturn = startValue > 0 ? ((totalValue - startValue) / startValue) * 100 : 0;
+
+  const metrics = [
+    { label: "Total Return", value: `+${totalReturn.toFixed(1)}%`, description: "Past Year" },
+    { label: "Current Value", value: formatCurrency(totalValue, portfolioCurrency), description: "Total Assets" },
+    // Add more real metrics calculation here
+  ];
+
+  if (!holdings) return <div>Loading analytics...</div>;
+
   return (
     <div className="space-y-6">
       {/* Key Metrics */}
@@ -68,17 +124,16 @@ export function Analytics() {
 
       {/* Charts */}
       <Tabs defaultValue="performance" className="w-full">
-        <TabsList className="grid w-full grid-cols-3">
+        <TabsList className="grid w-full grid-cols-2">
           <TabsTrigger value="performance">Performance</TabsTrigger>
           <TabsTrigger value="allocation">Allocation</TabsTrigger>
-          <TabsTrigger value="returns">Returns</TabsTrigger>
         </TabsList>
 
         <TabsContent value="performance" className="space-y-4">
           <Card>
             <CardHeader>
               <CardTitle>Portfolio Performance</CardTitle>
-              <CardDescription>Portfolio value vs benchmark over time</CardDescription>
+              <CardDescription>Portfolio value over the last year</CardDescription>
             </CardHeader>
             <CardContent>
               <ResponsiveContainer width="100%" height={400}>
@@ -88,17 +143,14 @@ export function Analytics() {
                       <stop offset="5%" stopColor="#3b82f6" stopOpacity={0.3}/>
                       <stop offset="95%" stopColor="#3b82f6" stopOpacity={0}/>
                     </linearGradient>
-                    <linearGradient id="colorBenchmark" x1="0" y1="0" x2="0" y2="1">
-                      <stop offset="5%" stopColor="#6b7280" stopOpacity={0.3}/>
-                      <stop offset="95%" stopColor="#6b7280" stopOpacity={0}/>
-                    </linearGradient>
                   </defs>
                   <CartesianGrid strokeDasharray="3 3" className="stroke-muted" />
-                  <XAxis dataKey="date" className="text-xs" />
+                  <XAxis dataKey="date" className="text-xs" minTickGap={30} />
                   <YAxis className="text-xs" />
                   <Tooltip 
                     contentStyle={{ backgroundColor: 'hsl(var(--card))', border: '1px solid hsl(var(--border))' }}
                     labelStyle={{ color: 'hsl(var(--foreground))' }}
+                    formatter={(value: number) => [formatCurrency(value, portfolioCurrency), "Value"]}
                   />
                   <Legend />
                   <Area 
@@ -108,14 +160,6 @@ export function Analytics() {
                     fillOpacity={1} 
                     fill="url(#colorValue)" 
                     name="Portfolio Value"
-                  />
-                  <Area 
-                    type="monotone" 
-                    dataKey="benchmark" 
-                    stroke="#6b7280" 
-                    fillOpacity={1} 
-                    fill="url(#colorBenchmark)" 
-                    name="Benchmark (S&P 500)"
                   />
                 </AreaChart>
               </ResponsiveContainer>
@@ -168,38 +212,6 @@ export function Analytics() {
                   ))}
                 </div>
               </div>
-            </CardContent>
-          </Card>
-        </TabsContent>
-
-        <TabsContent value="returns" className="space-y-4">
-          <Card>
-            <CardHeader>
-              <CardTitle>Monthly Returns</CardTitle>
-              <CardDescription>Month-over-month return percentage</CardDescription>
-            </CardHeader>
-            <CardContent>
-              <ResponsiveContainer width="100%" height={400}>
-                <LineChart data={monthlyReturns}>
-                  <CartesianGrid strokeDasharray="3 3" className="stroke-muted" />
-                  <XAxis dataKey="month" className="text-xs" />
-                  <YAxis className="text-xs" />
-                  <Tooltip 
-                    contentStyle={{ backgroundColor: 'hsl(var(--card))', border: '1px solid hsl(var(--border))' }}
-                    labelStyle={{ color: 'hsl(var(--foreground))' }}
-                    formatter={(value: number) => [`${value.toFixed(2)}%`, 'Return']}
-                  />
-                  <Legend />
-                  <Line 
-                    type="monotone" 
-                    dataKey="return" 
-                    stroke="#3b82f6" 
-                    strokeWidth={2}
-                    name="Monthly Return (%)"
-                    dot={{ fill: '#3b82f6', r: 4 }}
-                  />
-                </LineChart>
-              </ResponsiveContainer>
             </CardContent>
           </Card>
         </TabsContent>

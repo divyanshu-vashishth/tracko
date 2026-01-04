@@ -10,6 +10,10 @@
 
 import type * as auth from "../auth.js";
 import type * as http from "../http.js";
+import type * as news from "../news.js";
+import type * as portfolios from "../portfolios.js";
+import type * as stocks from "../stocks.js";
+import type * as users from "../users.js";
 
 import type {
   ApiFromModules,
@@ -20,6 +24,10 @@ import type {
 declare const fullApi: ApiFromModules<{
   auth: typeof auth;
   http: typeof http;
+  news: typeof news;
+  portfolios: typeof portfolios;
+  stocks: typeof stocks;
+  users: typeof users;
 }>;
 
 /**

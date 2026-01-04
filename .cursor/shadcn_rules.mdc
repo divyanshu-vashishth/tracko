@@ -16,10 +16,39 @@ but write this:
   <Link href="/dashboard">
     Dashboard
   </Link>
-</Button> insted write like this:
-<Button>
-  <Link href="/dashboard">
-    Dashboard
-  </Link>
 </Button>
+```
+
+### Avoiding Nested Buttons with Triggers
+
+To prevent hydration errors from nested `<button>` elements, use the `render` prop on trigger components (like `DropdownMenuTrigger`, `AlertDialogTrigger`, etc.) when the trigger itself should be a styled button.
+
+**Correct Usage:**
+Pass the button component you want to use as the trigger to the `render` prop. The children of the trigger will be rendered inside that button.
+
+```tsx
+// Correct: Use `render` prop on the Trigger
+<DropdownMenu>
+  <DropdownMenuTrigger render={<Button variant="ghost" size="icon" />}>
+    <MoreHorizontal />
+  </DropdownMenuTrigger>
+  <DropdownMenuContent>
+    {/* ... */}
+  </DropdownMenuContent>
+</DropdownMenu>
+```
+
+**Incorrect Usage:**
+Avoid `asChild` on triggers (as it can lead to nested buttons or unrecognized prop errors with this project's Base UI components) and do not wrap a button component directly.
+
+```tsx
+// Incorrect: Causes nested <button> error
+<DropdownMenuTrigger>
+  <Button>Trigger</Button>
+</DropdownMenuTrigger>
+
+// Incorrect: `asChild` can also lead to errors if not supported correctly
+<DropdownMenuTrigger asChild>
+  <Button>Trigger</Button>
+</DropdownMenuTrigger>
 ```

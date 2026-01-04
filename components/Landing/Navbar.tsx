@@ -71,11 +71,6 @@ export function Navbar() {
                 {!isAuthPage && !isLoading && (
                   isAuthenticated ? (
                     <>
-                    <Button variant="ghost" size="lg">
-                      <Link href="/dashboard">
-                          Dashboard
-                      </Link>
-                      </Button>
                       <Button
                         size="lg"
                         onClick={() => void signOut()}
