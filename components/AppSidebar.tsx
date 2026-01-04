@@ -1,6 +1,7 @@
 "use client";
 
-import { TrendingUp, LogOut, User as UserIcon } from "lucide-react";
+import { usePathname } from "next/navigation";
+import { TrendingUp, LogOut, User as UserIcon, BarChart3, Target, Newspaper } from "lucide-react";
 import { useQuery } from "convex/react";
 import { api } from "@/convex/_generated/api";
 import { useAuthActions } from "@convex-dev/auth/react";
@@ -13,13 +14,24 @@ import {
   SidebarMenuButton,
   SidebarMenuItem,
   SidebarRail,
+  SidebarGroup,
+  SidebarGroupLabel,
+  SidebarGroupContent,
 } from "@/components/ui/sidebar";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
 
+const navItems = [
+  { title: "Overview", href: "/dashboard", icon: TrendingUp },
+  { title: "Analytics", href: "/dashboard/analytics", icon: BarChart3 },
+  { title: "Benchmarks", href: "/dashboard/benchmarks", icon: Target },
+  { title: "News", href: "/dashboard/news", icon: Newspaper },
+];
+
 export function AppSidebar() {
   const user = useQuery(api.users.viewer);
   const { signOut } = useAuthActions();
+  const pathname = usePathname();
 
   return (
     <Sidebar collapsible="icon">
@@ -38,9 +50,34 @@ export function AppSidebar() {
           </SidebarMenuItem>
         </SidebarMenu>
       </SidebarHeader>
+
       <SidebarContent>
-        {/* Add navigation items here if needed later, for now just dashboard content exists in main area */}
+        <SidebarGroup>
+          <SidebarGroupLabel>Navigation</SidebarGroupLabel>
+          <SidebarGroupContent>
+            <SidebarMenu>
+              {navItems.map((item) => {
+                const isActive = pathname === item.href ||
+                  (item.href !== "/dashboard" && pathname.startsWith(item.href));
+                return (
+                  <SidebarMenuItem key={item.href}>
+                    <a href={item.href} className="block w-full">
+                      <SidebarMenuButton
+                        isActive={isActive}
+                        tooltip={item.title}
+                      >
+                        <item.icon className="size-4" />
+                        <span>{item.title}</span>
+                      </SidebarMenuButton>
+                    </a>
+                  </SidebarMenuItem>
+                );
+              })}
+            </SidebarMenu>
+          </SidebarGroupContent>
+        </SidebarGroup>
       </SidebarContent>
+
       <SidebarFooter>
         <SidebarMenu>
           <SidebarMenuItem>
@@ -53,17 +90,17 @@ export function AppSidebar() {
                   />
                 }
               >
-                  <Avatar className="h-8 w-8 rounded-lg">
-                    <AvatarImage src={user?.image} alt={user?.name} />
-                    <AvatarFallback className="rounded-lg">
-                        {user?.name ? user.name.slice(0, 2).toUpperCase() : <UserIcon className="size-4" />}
-                    </AvatarFallback>
-                  </Avatar>
-                  <div className="grid flex-1 text-left text-sm leading-tight">
-                    <span className="truncate font-semibold">{user?.name || "User"}</span>
-                    <span className="truncate text-xs">{user?.email || ""}</span>
-                  </div>
-                  <LogOut className="ml-auto size-4" />
+                <Avatar className="h-8 w-8 rounded-lg">
+                  <AvatarImage src={user?.image} alt={user?.name} />
+                  <AvatarFallback className="rounded-lg">
+                    {user?.name ? user.name.slice(0, 2).toUpperCase() : <UserIcon className="size-4" />}
+                  </AvatarFallback>
+                </Avatar>
+                <div className="grid flex-1 text-left text-sm leading-tight">
+                  <span className="truncate font-semibold">{user?.name || "User"}</span>
+                  <span className="truncate text-xs">{user?.email || ""}</span>
+                </div>
+                <LogOut className="ml-auto size-4" />
               </DropdownMenuTrigger>
               <DropdownMenuContent
                 className="w-[--radix-dropdown-menu-trigger-width] min-w-56 rounded-lg"

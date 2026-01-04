@@ -37,61 +37,61 @@ export function Analytics() {
     const baseDates = historyData[firstSymbol]?.map((d: any) => d.date) || [];
 
     return baseDates.map((date: any) => {
-       let totalValue = 0;
-       // For this date, sum up value of all holdings
-       holdings.forEach((h: any) => {
-          const stockHistory = historyData[h.symbol];
-          // Find closest date match
-          const dayData = stockHistory?.find((d: any) => d.date.toString().slice(0,10) === date.toString().slice(0,10));
-          if (dayData) {
-              totalValue += dayData.close * h.shares;
-          }
-       });
-       
-       // Simplified benchmark (e.g. just a flat growth or placeholder if we don't fetch SPY)
-       // For a real app, we'd fetch SPY history too.
-       return {
-           date: new Date(date).toLocaleDateString('en-US', { month: 'short', day: 'numeric' }),
-           value: totalValue,
-           // benchmark: totalValue * 0.9 // Placeholder
-       };
+      let totalValue = 0;
+      // For this date, sum up value of all holdings
+      holdings.forEach((h: any) => {
+        const stockHistory = historyData[h.symbol];
+        // Find closest date match
+        const dayData = stockHistory?.find((d: any) => d.date.toString().slice(0, 10) === date.toString().slice(0, 10));
+        if (dayData) {
+          totalValue += dayData.close * h.shares;
+        }
+      });
+
+      // Simplified benchmark (e.g. just a flat growth or placeholder if we don't fetch SPY)
+      // For a real app, we'd fetch SPY history too.
+      return {
+        date: new Date(date).toLocaleDateString('en-US', { month: 'short', day: 'numeric' }),
+        value: totalValue,
+        // benchmark: totalValue * 0.9 // Placeholder
+      };
     });
   }, [holdings, historyData]);
 
   // 3. Process Allocation Data
   const allocationData = useMemo(() => {
     if (!holdings) return [];
-    
+
     const sectorMap: Record<string, number> = {};
     let totalPortfolioValue = 0;
 
     holdings.forEach((h: any) => {
-        // Use current price from history (last entry) or avgPrice if history missing
-        const lastPrice = historyData[h.symbol]?.[historyData[h.symbol].length - 1]?.close || h.avgPurchasePrice;
-        const val = h.shares * lastPrice;
-        sectorMap[h.sector || "Other"] = (sectorMap[h.sector || "Other"] || 0) + val;
-        totalPortfolioValue += val;
+      // Use current price from history (last entry) or avgPrice if history missing
+      const lastPrice = historyData[h.symbol]?.[historyData[h.symbol].length - 1]?.close || h.avgPurchasePrice;
+      const val = h.shares * lastPrice;
+      sectorMap[h.sector || "Other"] = (sectorMap[h.sector || "Other"] || 0) + val;
+      totalPortfolioValue += val;
     });
 
     const colors = ["#3b82f6", "#10b981", "#f59e0b", "#8b5cf6", "#ef4444", "#6b7280"];
-    
+
     return Object.keys(sectorMap).map((sector, index) => ({
-        name: sector,
-        value: Number(((sectorMap[sector] / totalPortfolioValue) * 100).toFixed(1)),
-        color: colors[index % colors.length]
+      name: sector,
+      value: Number(((sectorMap[sector] / totalPortfolioValue) * 100).toFixed(1)),
+      color: colors[index % colors.length]
     }));
   }, [holdings, historyData]);
 
   // 4. Monthly Returns (Simplified based on performanceData)
   const monthlyReturns = useMemo(() => {
-     if (performanceData.length < 30) return [];
-     
-     // Group by month
-     const months: Record<string, { start: number, end: number }> = {};
-     
-     // Note: detailed calculation would require precise start/end of months.
-     // This is a simplified visualization.
-     return []; 
+    if (performanceData.length < 30) return [];
+
+    // Group by month
+    const months: Record<string, { start: number, end: number }> = {};
+
+    // Note: detailed calculation would require precise start/end of months.
+    // This is a simplified visualization.
+    return [];
   }, [performanceData]);
 
   // Metrics
@@ -124,7 +124,7 @@ export function Analytics() {
 
       {/* Charts */}
       <Tabs defaultValue="performance" className="w-full">
-        <TabsList className="grid w-full grid-cols-2">
+        <TabsList className="w-auto">
           <TabsTrigger value="performance">Performance</TabsTrigger>
           <TabsTrigger value="allocation">Allocation</TabsTrigger>
         </TabsList>
@@ -140,25 +140,25 @@ export function Analytics() {
                 <AreaChart data={performanceData}>
                   <defs>
                     <linearGradient id="colorValue" x1="0" y1="0" x2="0" y2="1">
-                      <stop offset="5%" stopColor="#3b82f6" stopOpacity={0.3}/>
-                      <stop offset="95%" stopColor="#3b82f6" stopOpacity={0}/>
+                      <stop offset="5%" stopColor="#3b82f6" stopOpacity={0.3} />
+                      <stop offset="95%" stopColor="#3b82f6" stopOpacity={0} />
                     </linearGradient>
                   </defs>
                   <CartesianGrid strokeDasharray="3 3" className="stroke-muted" />
                   <XAxis dataKey="date" className="text-xs" minTickGap={30} />
                   <YAxis className="text-xs" />
-                  <Tooltip 
+                  <Tooltip
                     contentStyle={{ backgroundColor: 'hsl(var(--card))', border: '1px solid hsl(var(--border))' }}
                     labelStyle={{ color: 'hsl(var(--foreground))' }}
                     formatter={(value: number) => [formatCurrency(value, portfolioCurrency), "Value"]}
                   />
                   <Legend />
-                  <Area 
-                    type="monotone" 
-                    dataKey="value" 
-                    stroke="#3b82f6" 
-                    fillOpacity={1} 
-                    fill="url(#colorValue)" 
+                  <Area
+                    type="monotone"
+                    dataKey="value"
+                    stroke="#3b82f6"
+                    fillOpacity={1}
+                    fill="url(#colorValue)"
                     name="Portfolio Value"
                   />
                 </AreaChart>
@@ -191,7 +191,7 @@ export function Analytics() {
                         <Cell key={`cell-${index}`} fill={entry.color} />
                       ))}
                     </Pie>
-                    <Tooltip 
+                    <Tooltip
                       contentStyle={{ backgroundColor: 'hsl(var(--card))', border: '1px solid hsl(var(--border))' }}
                     />
                   </PieChart>
@@ -200,8 +200,8 @@ export function Analytics() {
                 <div className="space-y-3 w-full md:w-auto">
                   {allocationData.map((item) => (
                     <div key={item.name} className="flex items-center gap-3">
-                      <div 
-                        className="w-4 h-4 rounded" 
+                      <div
+                        className="w-4 h-4 rounded"
                         style={{ backgroundColor: item.color }}
                       />
                       <div className="flex-1 min-w-[120px]">

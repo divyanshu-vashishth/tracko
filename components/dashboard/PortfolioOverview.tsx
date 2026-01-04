@@ -8,13 +8,16 @@ import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, 
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
-import { TrendingUp, TrendingDown, PlusCircle, MoreHorizontal, Pencil, Trash, Search, Loader2 } from "lucide-react";
+import { TrendingUp, TrendingDown, PlusCircle, MoreHorizontal, Pencil, Trash, Search, Loader2, Upload, Check, AlertCircle, X, ImageIcon, Trash2 } from "lucide-react";
 import { useQuery, useMutation, useAction } from "convex/react";
 import { api } from "@/convex/_generated/api";
-import { useEffect, useState, useRef } from "react";
+import { useEffect, useState, useRef, useCallback } from "react";
 import { Id } from "@/convex/_generated/dataModel";
 import { formatCurrency } from "@/lib/formatCurrency";
 import { ScrollArea } from "@/components/ui/scroll-area";
+import { Dropzone, DropzoneEmptyState } from "@/components/kibo-ui/dropzone";
+import { Alert, AlertDescription } from "@/components/ui/alert";
+import { toast } from "sonner";
 
 interface Holding {
   _id: Id<"holdings">;
@@ -39,6 +42,9 @@ export function PortfolioOverview() {
   const [isAddOpen, setIsAddOpen] = useState(false);
   const [editingHolding, setEditingHolding] = useState<Holding | null>(null);
   const [holdingToDelete, setHoldingToDelete] = useState<Id<"holdings"> | null>(null);
+
+  // Import state
+  const [isImportOpen, setIsImportOpen] = useState(false);
 
   // Fetch live prices
   useEffect(() => {
@@ -83,6 +89,7 @@ export function PortfolioOverview() {
     if (holdingToDelete) {
       await deleteHolding({ id: holdingToDelete });
       setHoldingToDelete(null);
+      toast.success("Holding deleted successfully");
     }
   };
 
@@ -139,9 +146,14 @@ export function PortfolioOverview() {
             <CardTitle>Holdings</CardTitle>
             <CardDescription>Your current portfolio positions</CardDescription>
           </div>
-          <Button size="sm" onClick={() => setIsAddOpen(true)}>
-            <PlusCircle className="mr-2 h-4 w-4" /> Add Holding
-          </Button>
+          <div className="flex gap-2">
+            <Button size="sm" variant="outline" onClick={() => setIsImportOpen(true)}>
+              <Upload className="mr-2 h-4 w-4" /> Upload Image
+            </Button>
+            <Button size="sm" onClick={() => setIsAddOpen(true)}>
+              <PlusCircle className="mr-2 h-4 w-4" /> Add Holding
+            </Button>
+          </div>
         </CardHeader>
         <CardContent>
           {mergedHoldings.length === 0 ? (
@@ -217,6 +229,11 @@ export function PortfolioOverview() {
         open={isAddOpen}
         onOpenChange={setIsAddOpen}
         mode="add"
+      />
+
+      <ImportDialog
+        open={isImportOpen}
+        onOpenChange={setIsImportOpen}
       />
 
       {editingHolding && (
@@ -377,6 +394,7 @@ function HoldingDialog({
           currency,
           sector,
         });
+        toast.success("Holding added successfully");
       } else {
         await updateHolding({
           id: holding._id,
@@ -384,11 +402,12 @@ function HoldingDialog({
           price: Number(price),
           currency,
         });
+        toast.success("Holding updated successfully");
       }
       onOpenChange(false);
     } catch (error) {
       console.error("Failed to save holding:", error);
-      alert("Failed to save holding. Please check the inputs.");
+      toast.error("Failed to save holding. Please check the inputs.");
     } finally {
       setIsSubmitting(false);
     }
@@ -480,19 +499,19 @@ function HoldingDialog({
           {/* Current Price Display - only in add mode */}
           {mode === "add" && symbol && (
             <div className="grid grid-cols-4 items-center gap-4">
-              <Label className="text-right">Current Price</Label>
-              <div className="col-span-3 flex items-center gap-2">
+              <Label htmlFor="currentPrice" >Current Price</Label>
+              <div className="col-span-3 h-10 flex items-center px-3 rounded-md border border-input bg-muted">
                 {isFetchingPrice ? (
                   <div className="flex items-center gap-2 text-muted-foreground">
                     <Loader2 className="h-4 w-4 animate-spin" />
-                    <span>Fetching price...</span>
+                    <span className="text-sm">Fetching...</span>
                   </div>
                 ) : currentPrice !== null ? (
-                  <span className="text-lg font-semibold text-green-600">
+                  <span className="text-sm font-semibold text-green-600">
                     {formatCurrency(currentPrice, currency)}
                   </span>
                 ) : (
-                  <span className="text-muted-foreground">--</span>
+                  <span className="text-sm text-muted-foreground">Select a stock</span>
                 )}
               </div>
             </div>
@@ -538,6 +557,311 @@ function HoldingDialog({
           <Button type="submit" onClick={handleSubmit} disabled={isSubmitting}>
             {isSubmitting ? "Saving..." : "Save changes"}
           </Button>
+        </DialogFooter>
+      </DialogContent>
+    </Dialog>
+  );
+}
+
+interface ParsedHolding {
+  symbol: string;
+  name: string | null;
+  quantity: number;
+  avgPrice: number;
+  currency: string;
+}
+
+function ImportDialog({
+  open,
+  onOpenChange
+}: {
+  open: boolean;
+  onOpenChange: (open: boolean) => void;
+}) {
+  const parseScreenshot = useAction(api.portfolioImport.parsePortfolioScreenshot);
+  const resolveSymbol = useAction(api.stocks.resolveSymbol);
+  const addHolding = useMutation(api.portfolios.addHolding);
+
+  const [files, setFiles] = useState<File[]>([]);
+  const [imagePreview, setImagePreview] = useState<string | null>(null);
+  const [isProcessing, setIsProcessing] = useState(false);
+  const [isSaving, setIsSaving] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+  const [parsedHoldings, setParsedHoldings] = useState<ParsedHolding[]>([]);
+  const [isResolving, setIsResolving] = useState(false);
+
+  const handleDrop = useCallback(async (acceptedFiles: File[]) => {
+    if (acceptedFiles.length === 0) return;
+
+    const file = acceptedFiles[0];
+    setFiles(acceptedFiles);
+    setError(null);
+    setParsedHoldings([]);
+
+    // Create preview
+    const reader = new FileReader();
+    reader.onload = async (e) => {
+      const base64Full = e.target?.result as string;
+      setImagePreview(base64Full);
+
+      // Extract base64 data
+      const base64Data = base64Full.split(",")[1];
+
+      setIsProcessing(true);
+      try {
+        const holdings = await parseScreenshot({
+          imageBase64: base64Data,
+          mimeType: file.type,
+        });
+
+        // Resolve symbols to Yahoo Finance format
+        setIsResolving(true);
+        const resolvedHoldings = await Promise.all(
+          holdings.map(async (h) => {
+            try {
+              const resolved = await resolveSymbol({ symbol: h.symbol, name: h.name || undefined });
+              if (resolved && resolved.resolvedSymbol) {
+                return {
+                  ...h,
+                  symbol: resolved.resolvedSymbol,
+                  name: resolved.name || h.name,
+                  currency: resolved.currency || h.currency,
+                };
+              }
+            } catch {
+              // Keep original if resolution fails
+            }
+            return h;
+          })
+        );
+        setIsResolving(false);
+
+        setParsedHoldings(resolvedHoldings);
+      } catch (err) {
+        setError(err instanceof Error ? err.message : "Failed to analyze image");
+      } finally {
+        setIsProcessing(false);
+        setIsResolving(false);
+      }
+    };
+    reader.readAsDataURL(file);
+  }, [parseScreenshot, resolveSymbol]);
+
+  const updateHolding = (index: number, field: keyof ParsedHolding, value: string | number) => {
+    setParsedHoldings(prev => {
+      const updated = [...prev];
+      updated[index] = { ...updated[index], [field]: value };
+      return updated;
+    });
+  };
+
+  const removeHolding = (index: number) => {
+    setParsedHoldings(prev => prev.filter((_, i) => i !== index));
+  };
+
+  const saveAllHoldings = async () => {
+    if (parsedHoldings.length === 0) return;
+
+    setIsSaving(true);
+    setError(null);
+
+    let savedCount = 0;
+    try {
+      for (const holding of parsedHoldings) {
+        if (holding.symbol && holding.quantity > 0 && holding.avgPrice > 0) {
+          await addHolding({
+            symbol: holding.symbol,
+            name: holding.name || holding.symbol,
+            shares: holding.quantity,
+            price: holding.avgPrice,
+            currency: holding.currency,
+          });
+          savedCount++;
+        }
+      }
+      // Reset and close
+      setFiles([]);
+      setImagePreview(null);
+      setParsedHoldings([]);
+      onOpenChange(false);
+      toast.success(`${savedCount} holding(s) imported successfully`);
+    } catch (err) {
+      setError(err instanceof Error ? err.message : "Failed to save holdings");
+      toast.error("Failed to save holdings");
+    } finally {
+      setIsSaving(false);
+    }
+  };
+
+  const resetImport = () => {
+    setFiles([]);
+    setImagePreview(null);
+    setParsedHoldings([]);
+    setError(null);
+  };
+
+  return (
+    <Dialog open={open} onOpenChange={(openState) => {
+      if (!openState) resetImport();
+      onOpenChange(openState);
+    }}>
+      <DialogContent className="sm:max-w-[700px] max-h-[90vh] overflow-y-auto">
+        <DialogHeader>
+          <DialogTitle className="flex items-center gap-2">
+            Import from Screenshot
+          </DialogTitle>
+          <DialogDescription>
+            Upload a screenshot of your portfolio and we&apos;ll extract the holdings automatically.
+          </DialogDescription>
+        </DialogHeader>
+
+        <div className="space-y-4">
+          {!imagePreview ? (
+            <Dropzone
+              accept={{ "image/*": [".png", ".jpg", ".jpeg", ".webp"] }}
+              maxFiles={1}
+              onDrop={handleDrop}
+              src={files}
+            >
+              <DropzoneEmptyState />
+            </Dropzone>
+          ) : (
+            <div className="space-y-4">
+              <div className="relative rounded-lg overflow-hidden border max-h-48 flex items-center justify-center bg-muted">
+                <img
+                  src={imagePreview}
+                  alt="Portfolio screenshot"
+                  className="max-h-48 object-contain"
+                />
+                <Button
+                  variant="destructive"
+                  size="icon"
+                  className="absolute top-2 right-2"
+                  onClick={resetImport}
+                >
+                  <X className="h-4 w-4" />
+                </Button>
+              </div>
+
+              {isProcessing && (
+                <div className="flex items-center justify-center gap-2 py-4 text-muted-foreground">
+                  <Loader2 className="h-5 w-5 animate-spin" />
+                  <span>Analyzing screenshot with AI...</span>
+                </div>
+              )}
+
+              {isResolving && (
+                <div className="flex items-center justify-center gap-2 py-4 text-muted-foreground">
+                  <Loader2 className="h-5 w-5 animate-spin" />
+                  <span>Resolving stock symbols...</span>
+                </div>
+              )}
+            </div>
+          )}
+
+          {error && (
+            <Alert variant="destructive">
+              <AlertCircle className="h-4 w-4" />
+              <AlertDescription>{error}</AlertDescription>
+            </Alert>
+          )}
+
+          {/* Parsed Holdings Table */}
+          {parsedHoldings.length > 0 && (
+            <div className="space-y-4">
+              <div className="text-sm font-medium">Review Extracted Holdings</div>
+              <div className="rounded-md border max-h-60 overflow-y-auto">
+                <Table>
+                  <TableHeader>
+                    <TableRow>
+                      <TableHead>Symbol</TableHead>
+                      <TableHead>Name</TableHead>
+                      <TableHead className="text-right">Qty</TableHead>
+                      <TableHead className="text-right">Avg Price</TableHead>
+                      <TableHead>Currency</TableHead>
+                      <TableHead className="w-[40px]"></TableHead>
+                    </TableRow>
+                  </TableHeader>
+                  <TableBody>
+                    {parsedHoldings.map((holding, index) => (
+                      <TableRow key={index}>
+                        <TableCell>
+                          <Input
+                            value={holding.symbol}
+                            onChange={(e) => updateHolding(index, "symbol", e.target.value.toUpperCase())}
+                            className="w-24 h-8"
+                          />
+                        </TableCell>
+                        <TableCell>
+                          <Input
+                            value={holding.name || ""}
+                            onChange={(e) => updateHolding(index, "name", e.target.value)}
+                            placeholder="Name"
+                            className="w-32 h-8"
+                          />
+                        </TableCell>
+                        <TableCell>
+                          <Input
+                            type="number"
+                            value={holding.quantity}
+                            onChange={(e) => updateHolding(index, "quantity", parseFloat(e.target.value) || 0)}
+                            className="w-20 h-8 text-right"
+                          />
+                        </TableCell>
+                        <TableCell>
+                          <Input
+                            type="number"
+                            step="0.01"
+                            value={holding.avgPrice}
+                            onChange={(e) => updateHolding(index, "avgPrice", parseFloat(e.target.value) || 0)}
+                            className="w-24 h-8 text-right"
+                          />
+                        </TableCell>
+                        <TableCell>
+                          <Input
+                            value={holding.currency}
+                            onChange={(e) => updateHolding(index, "currency", e.target.value.toUpperCase())}
+                            className="w-14 h-8"
+                          />
+                        </TableCell>
+                        <TableCell>
+                          <Button
+                            variant="ghost"
+                            size="icon"
+                            onClick={() => removeHolding(index)}
+                            className="h-8 w-8 text-destructive hover:text-destructive"
+                          >
+                            <Trash2 className="h-4 w-4" />
+                          </Button>
+                        </TableCell>
+                      </TableRow>
+                    ))}
+                  </TableBody>
+                </Table>
+              </div>
+            </div>
+          )}
+        </div>
+
+        <DialogFooter>
+          <Button variant="outline" onClick={() => onOpenChange(false)}>
+            Cancel
+          </Button>
+          {parsedHoldings.length > 0 && (
+            <Button onClick={saveAllHoldings} disabled={isSaving}>
+              {isSaving ? (
+                <>
+                  <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                  Saving...
+                </>
+              ) : (
+                <>
+                  <Check className="mr-2 h-4 w-4" />
+                  Save {parsedHoldings.length} Holdings
+                </>
+              )}
+            </Button>
+          )}
         </DialogFooter>
       </DialogContent>
     </Dialog>

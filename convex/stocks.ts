@@ -100,3 +100,84 @@ export const getHistoricalPrices = action({
     return results;
   },
 });
+
+// Resolve a symbol to its Yahoo Finance equivalent
+// Handles cases like "GOLDBEES-E" -> "GOLDBEES.NS"
+export const resolveSymbol = action({
+  args: {
+    symbol: v.string(),
+    name: v.optional(v.string()),
+  },
+  handler: async (ctx, { symbol, name }) => {
+    // Clean the symbol - remove common suffixes like -E, -BE, etc.
+    const cleanSymbol = symbol.replace(/-[A-Z]+$/, "").toUpperCase();
+
+    // Try different variations
+    const variations = [
+      symbol,
+      cleanSymbol,
+      `${cleanSymbol}.NS`, // NSE India
+      `${cleanSymbol}.BO`, // BSE India
+    ];
+
+    // First try direct quote for each variation
+    for (const sym of variations) {
+      try {
+        const quote = await yahooFinance.quote(sym);
+        if (quote && quote.symbol && quote.regularMarketPrice) {
+          return sanitize({
+            resolvedSymbol: quote.symbol,
+            name: quote.shortName || quote.longName || name,
+            price: quote.regularMarketPrice,
+            currency: quote.currency || "INR",
+            exchange: quote.exchange,
+          });
+        }
+      } catch {
+        // Continue to next variation
+      }
+    }
+
+    // If direct quotes fail, try search
+    const searchQuery = name || cleanSymbol;
+    try {
+      const results = await yahooFinance.search(searchQuery, { quotesCount: 5, newsCount: 0 });
+      const match = results.quotes.find((q: any) => {
+        const qSymbol = q.symbol?.toUpperCase() || "";
+        return qSymbol.startsWith(cleanSymbol) ||
+          qSymbol.replace(/\.(NS|BO)$/, "") === cleanSymbol;
+      });
+
+      if (match && match.symbol) {
+        const matchSymbol = match.symbol as string;
+        // Get the actual quote to get price
+        try {
+          const quote = await yahooFinance.quote(matchSymbol);
+          if (quote) {
+            return sanitize({
+              resolvedSymbol: quote.symbol,
+              name: quote.shortName || quote.longName || match.shortname || name,
+              price: quote.regularMarketPrice,
+              currency: quote.currency || "INR",
+              exchange: quote.exchange,
+            });
+          }
+        } catch {
+          // Return match without price
+          return sanitize({
+            resolvedSymbol: match.symbol,
+            name: match.shortname || match.longname || name,
+            price: null,
+            currency: "INR",
+            exchange: match.exchange,
+          });
+        }
+      }
+    } catch (error) {
+      console.error(`Search failed for ${searchQuery}:`, error);
+    }
+
+    // Return null if nothing found
+    return null;
+  },
+});
