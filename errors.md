@@ -1,43 +1,16 @@
-1/4/2026, 1:17:46 PM [CONVEX A(stocks:getQuotes)] [LOG] 'Additionally, your yahoo-finance2 version out of date: 0.0.1 < 3.11.2 (latest)'  
-1/4/2026, 1:17:46 PM [CONVEX A(stocks:getQuotes)] [ERROR] 'Failed to fetch quote for ADANIENT' Error: Failed Yahoo Schema validation      
-    at validate (convex:/user/stocks.js:6803:11)
-    at moduleExec (convex:/user/stocks.js:7218:5)
-    at processTicksAndRejections (node:internal/process/task_queues:95:5)
-    at async quote (convex:/user/stocks.js:12003:74)
-    at async handler (convex:/user/stocks.js:33441:19)
-    at async invokeFunction (convex:/user/_deps/node/RVH45YSE.js:1117:9)
-    at async invokeAction (convex:/user/_deps/node/RVH45YSE.js:1177:10)
-    at async executeInner (bundledFunctions.js:39475:17)
-    at async execute (bundledFunctions.js:39420:19)
-    at bundledFunctions.js:39377:21 {
-  name: 'FailedYahooValidationError',
-  result: [
-    {
-      language: 'en-US',
-      region: 'US',
-      quoteType: 'EQUITY',
-      typeDisp: 'Equity',
-      triggerable: false,
-      customPriceAlertConfidence: 'LOW',
-      corporateActions: [],
-      esgPopulated: false,
-      hasPrePostMarketData: false,
-      priceHint: 2,
-      epsForward: 70.56,
-      tradeable: false,
-      cryptoTradeable: false,
-      symbol: 'ADANIENT'
-    }
-  ],
-  errors: [
-    {
-      instancePath: '/0',
-      schemaPath: '#/definitions/QuoteResponseArray/items',
-      message: 'should match some schema in oneOf',
-      params: [Object],
-      data: [Object],
-      subErrors: [Array]
-    }
-  ]
-}
-✔ 13:28:03 Convex functions ready! (8.35s)
+1/5/2026, 5:51:15 PM [CONVEX A(stocks:getQuotes)] [WARN] '[yahoo-finance2] Unsupported environment: Requires Node >= 22.0.0, found 20.19.5. (runtime=node, version=20.19.5). Things might break or work unexpectedly!'
+✔ Added table indexes:
+  [+] chatHistory.by_user   userId, _creationTime
+  [+] journalEntries.by_user   userId, _creationTime
+  [+] journalEntries.by_user_date   userId, date, _creationTime
+✔ 18:09:48 Convex functions ready! (11.72s)
+✖ Error: Unable to start push to https://formal-lemur-79.convex.cloud
+✖ Error fetching POST  https://formal-lemur-79.convex.cloud/api/deploy2/start_push 400 Bad Request: InvalidModules: Hit an error while pushing:
+Loading the pushed modules encountered the following
+    error:
+`deleteJournalEntry` defined in `journal.js` is a Mutation function. Only actions can be defined in Node.js. See https://docs.convex.dev/functions/actions for more details.
+✖ Error: Unable to start push to https://formal-lemur-79.convex.cloud
+✖ Error fetching POST  https://formal-lemur-79.convex.cloud/api/deploy2/start_push 400 Bad Request: InvalidModules: Hit an error while pushing:
+Loading the pushed modules encountered the following
+    error:
+`clearChatHistory` defined in `chatHistory.js` is a Mutation function. Only actions can be defined in Node.js. See https://docs.convex.dev/functions/actions for more details.

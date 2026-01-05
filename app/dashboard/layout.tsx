@@ -5,6 +5,7 @@ import { AppSidebar } from "@/components/AppSidebar";
 import { SidebarProvider, SidebarInset, SidebarTrigger } from "@/components/ui/sidebar";
 import { Separator } from "@/components/ui/separator";
 import { Spinner } from "@/components/ui/spinner";
+import { AIChatbot } from "@/components/AIChatbot";
 
 export default function DashboardLayout({
     children,
@@ -41,8 +42,10 @@ export default function DashboardLayout({
                             {children}
                         </main>
                     </SidebarInset>
+                    <AIChatbot />
                 </SidebarProvider>
             </Authenticated>
         </>
     );
 }
+

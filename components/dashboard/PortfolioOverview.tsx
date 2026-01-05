@@ -8,7 +8,7 @@ import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, 
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
-import { TrendingUp, TrendingDown, PlusCircle, MoreHorizontal, Pencil, Trash, Search, Loader2, Upload, Check, AlertCircle, X, ImageIcon, Trash2 } from "lucide-react";
+import { TrendingUp, TrendingDown, PlusCircle, MoreHorizontal, Pencil, Trash, Search, Loader2, Upload, Check, AlertCircle, X, ImageIcon, Trash2, ArrowUpDown, ArrowUp, ArrowDown } from "lucide-react";
 import { useQuery, useMutation, useAction } from "convex/react";
 import { api } from "@/convex/_generated/api";
 import { useEffect, useState, useRef, useCallback } from "react";
@@ -51,6 +51,23 @@ export function PortfolioOverview() {
   // Import state
   const [isImportOpen, setIsImportOpen] = useState(false);
   const [isCsvImportOpen, setIsCsvImportOpen] = useState(false);
+
+  // Sort state
+  type SortKey = "symbol" | "name" | "shares" | "avgPurchasePrice" | "currentPrice" | "value" | "gainPercent";
+  type SortDirection = "asc" | "desc" | null;
+  const [sortKey, setSortKey] = useState<SortKey | null>(null);
+  const [sortDirection, setSortDirection] = useState<SortDirection>(null);
+
+  const handleSort = (key: SortKey) => {
+    if (sortKey === key) {
+      if (sortDirection === "asc") setSortDirection("desc");
+      else if (sortDirection === "desc") { setSortKey(null); setSortDirection(null); }
+      else setSortDirection("asc");
+    } else {
+      setSortKey(key);
+      setSortDirection("asc");
+    }
+  };
 
   // Fetch live prices
   useEffect(() => {
@@ -110,6 +127,21 @@ export function PortfolioOverview() {
       valueInDisplayCurrency,
       costInDisplayCurrency,
     };
+  });
+
+  // Sort holdings
+  const sortedHoldings = [...mergedHoldings].sort((a, b) => {
+    if (!sortKey || !sortDirection) return 0;
+
+    let aVal: string | number = a[sortKey] ?? 0;
+    let bVal: string | number = b[sortKey] ?? 0;
+
+    if (typeof aVal === "string") aVal = aVal.toLowerCase();
+    if (typeof bVal === "string") bVal = bVal.toLowerCase();
+
+    if (aVal < bVal) return sortDirection === "asc" ? -1 : 1;
+    if (aVal > bVal) return sortDirection === "asc" ? 1 : -1;
+    return 0;
   });
 
   // Calculate totals in display currency
@@ -201,18 +233,74 @@ export function PortfolioOverview() {
             <Table>
               <TableHeader>
                 <TableRow>
-                  <TableHead>Symbol</TableHead>
-                  <TableHead>Name</TableHead>
-                  <TableHead className="text-right">Shares</TableHead>
-                  <TableHead className="text-right">Avg Price</TableHead>
-                  <TableHead className="text-right">Current Price</TableHead>
-                  <TableHead className="text-right">Value</TableHead>
-                  <TableHead className="text-right">Gain/Loss</TableHead>
+                  <TableHead
+                    className="cursor-pointer hover:bg-muted/50 select-none"
+                    onClick={() => handleSort("symbol")}
+                  >
+                    <div className="flex items-center gap-1">
+                      Symbol
+                      {sortKey === "symbol" ? (sortDirection === "asc" ? <ArrowUp className="h-3 w-3" /> : <ArrowDown className="h-3 w-3" />) : <ArrowUpDown className="h-3 w-3 opacity-0 group-hover:opacity-50" />}
+                    </div>
+                  </TableHead>
+                  <TableHead
+                    className="cursor-pointer hover:bg-muted/50 select-none"
+                    onClick={() => handleSort("name")}
+                  >
+                    <div className="flex items-center gap-1">
+                      Name
+                      {sortKey === "name" ? (sortDirection === "asc" ? <ArrowUp className="h-3 w-3" /> : <ArrowDown className="h-3 w-3" />) : <ArrowUpDown className="h-3 w-3 opacity-0 group-hover:opacity-50" />}
+                    </div>
+                  </TableHead>
+                  <TableHead
+                    className="text-right cursor-pointer hover:bg-muted/50 select-none"
+                    onClick={() => handleSort("shares")}
+                  >
+                    <div className="flex items-center justify-end gap-1">
+                      Shares
+                      {sortKey === "shares" ? (sortDirection === "asc" ? <ArrowUp className="h-3 w-3" /> : <ArrowDown className="h-3 w-3" />) : <ArrowUpDown className="h-3 w-3 opacity-0 group-hover:opacity-50" />}
+                    </div>
+                  </TableHead>
+                  <TableHead
+                    className="text-right cursor-pointer hover:bg-muted/50 select-none"
+                    onClick={() => handleSort("avgPurchasePrice")}
+                  >
+                    <div className="flex items-center justify-end gap-1">
+                      Avg Price
+                      {sortKey === "avgPurchasePrice" ? (sortDirection === "asc" ? <ArrowUp className="h-3 w-3" /> : <ArrowDown className="h-3 w-3" />) : <ArrowUpDown className="h-3 w-3 opacity-0 group-hover:opacity-50" />}
+                    </div>
+                  </TableHead>
+                  <TableHead
+                    className="text-right cursor-pointer hover:bg-muted/50 select-none"
+                    onClick={() => handleSort("currentPrice")}
+                  >
+                    <div className="flex items-center justify-end gap-1">
+                      Current Price
+                      {sortKey === "currentPrice" ? (sortDirection === "asc" ? <ArrowUp className="h-3 w-3" /> : <ArrowDown className="h-3 w-3" />) : <ArrowUpDown className="h-3 w-3 opacity-0 group-hover:opacity-50" />}
+                    </div>
+                  </TableHead>
+                  <TableHead
+                    className="text-right cursor-pointer hover:bg-muted/50 select-none"
+                    onClick={() => handleSort("value")}
+                  >
+                    <div className="flex items-center justify-end gap-1">
+                      Value
+                      {sortKey === "value" ? (sortDirection === "asc" ? <ArrowUp className="h-3 w-3" /> : <ArrowDown className="h-3 w-3" />) : <ArrowUpDown className="h-3 w-3 opacity-0 group-hover:opacity-50" />}
+                    </div>
+                  </TableHead>
+                  <TableHead
+                    className="text-right cursor-pointer hover:bg-muted/50 select-none"
+                    onClick={() => handleSort("gainPercent")}
+                  >
+                    <div className="flex items-center justify-end gap-1">
+                      Gain/Loss
+                      {sortKey === "gainPercent" ? (sortDirection === "asc" ? <ArrowUp className="h-3 w-3" /> : <ArrowDown className="h-3 w-3" />) : <ArrowUpDown className="h-3 w-3 opacity-0 group-hover:opacity-50" />}
+                    </div>
+                  </TableHead>
                   <TableHead className="w-[50px]"></TableHead>
                 </TableRow>
               </TableHeader>
               <TableBody>
-                {mergedHoldings.map((holding) => {
+                {sortedHoldings.map((holding) => {
                   return (
                     <TableRow key={holding._id}>
                       <TableCell>

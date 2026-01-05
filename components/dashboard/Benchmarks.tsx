@@ -80,7 +80,7 @@ export function Benchmarks() {
   const [historyData, setHistoryData] = useState<Record<string, any[]>>({});
   const [selectedBenchmarks, setSelectedBenchmarks] = useState<Set<string>>(new Set(["SPY"]));
   const [customBenchmarks, setCustomBenchmarks] = useState<Benchmark[]>([]);
-  const [timePeriod, setTimePeriod] = useState<TimePeriod>("YTD");
+  const [timePeriod, setTimePeriod] = useState<TimePeriod>("1Y");
 
   // Search state
   const [searchQuery, setSearchQuery] = useState("");
@@ -274,116 +274,111 @@ export function Benchmarks() {
 
   return (
     <div className="space-y-6">
-      {/* Benchmark Search & Selection */}
-      <Card>
-        <CardHeader>
-          <CardTitle>Select Benchmarks</CardTitle>
-          <CardDescription>Choose benchmarks to compare with your portfolio</CardDescription>
-        </CardHeader>
-        <CardContent className="space-y-4">
-          {/* Search Input */}
-          <div className="relative max-w-sm">
-            <Search className="absolute left-2.5 top-2.5 h-4 w-4 text-muted-foreground" />
-            <Input
-              value={searchQuery}
-              onChange={(e) => setSearchQuery(e.target.value)}
-              placeholder="Search for more indices..."
-              className="pl-9"
-              autoComplete="off"
-            />
-            {isSearching && (
-              <div className="absolute right-2.5 top-2.5">
-                <Loader2 className="h-4 w-4 animate-spin text-muted-foreground" />
-              </div>
-            )}
+      {/* Benchmark Search & Selection - No card to avoid overflow issues */}
+      <div className="border rounded-lg p-6 space-y-4">
+        <div>
+          <h3 className="text-lg font-semibold">Select Benchmarks</h3>
+          <p className="text-sm text-muted-foreground">Choose benchmarks to compare with your portfolio</p>
+        </div>
 
-            {/* Search Results Dropdown */}
-            {showResults && searchResults.length > 0 && (
-              <div className="absolute top-full left-0 right-0 mt-1 z-50">
-                <Card className="shadow-lg overflow-hidden">
-                  <ScrollArea className="max-h-[200px]">
-                    <div className="p-1">
-                      {searchResults.map((result: any) => (
-                        <div
-                          key={result.symbol}
-                          className="flex flex-col px-3 py-2 text-sm cursor-pointer hover:bg-muted rounded-sm"
-                          onClick={() => addBenchmark(result)}
-                        >
-                          <div className="font-medium flex justify-between">
-                            <span>{result.symbol}</span>
-                            <span className="text-xs text-muted-foreground">{result.typeDisp}</span>
-                          </div>
-                          <div className="text-xs text-muted-foreground truncate">
-                            {result.shortname || result.longname} • {result.exchDisp}
-                          </div>
-                        </div>
-                      ))}
-                    </div>
-                  </ScrollArea>
-                </Card>
-              </div>
-            )}
-          </div>
-
-          {/* Time Period Selector */}
-          <div className="flex items-center gap-3">
-            <span className="text-sm text-muted-foreground">Period:</span>
-            <div className="flex gap-1 bg-muted rounded-lg p-1">
-              {TIME_PERIODS.map((period) => (
-                <button
-                  key={period.value}
-                  onClick={() => setTimePeriod(period.value)}
-                  className={`px-3 py-1 text-sm rounded-md transition-colors ${timePeriod === period.value
-                    ? "bg-background shadow-sm font-medium"
-                    : "text-muted-foreground hover:text-foreground"
-                    }`}
-                >
-                  {period.label}
-                </button>
-              ))}
+        {/* Search Input */}
+        <div className="relative max-w-sm">
+          <Search className="absolute left-2.5 top-2.5 h-4 w-4 text-muted-foreground" />
+          <Input
+            value={searchQuery}
+            onChange={(e) => setSearchQuery(e.target.value)}
+            placeholder="Search for more indices..."
+            className="pl-9"
+            autoComplete="off"
+          />
+          {isSearching && (
+            <div className="absolute right-2.5 top-2.5">
+              <Loader2 className="h-4 w-4 animate-spin text-muted-foreground" />
             </div>
-          </div>
+          )}
 
-          {/* Benchmark Checkboxes */}
-          <div className="flex flex-wrap gap-3">
-            {allBenchmarks.map((benchmark) => (
-              <div
-                key={benchmark.symbol}
-                className="flex items-center gap-2 border rounded-lg px-3 py-2 hover:bg-muted/50 transition-colors"
-              >
-                <Checkbox
-                  id={benchmark.symbol}
-                  checked={selectedBenchmarks.has(benchmark.symbol)}
-                  onCheckedChange={() => toggleBenchmark(benchmark.symbol)}
-                />
-                <label
-                  htmlFor={benchmark.symbol}
-                  className="text-sm font-medium cursor-pointer flex items-center gap-2"
-                >
+          {/* Search Results Dropdown - Full height, no max */}
+          {showResults && searchResults.length > 0 && (
+            <div className="absolute top-full left-0 right-0 mt-1 z-[100] bg-popover border rounded-md shadow-xl overflow-hidden">
+              <div className="max-h-[300px] overflow-y-auto p-1">
+                {searchResults.map((result: any) => (
                   <div
-                    className="w-3 h-3 rounded-full"
-                    style={{ backgroundColor: benchmark.color }}
-                  />
-                  {benchmark.name}
-                </label>
-                {!PREDEFINED_BENCHMARKS.find(b => b.symbol === benchmark.symbol) && (
-                  <Button
-                    variant="ghost"
-                    size="icon"
-                    className="h-5 w-5 ml-1"
-                    onClick={(e) => {
-                      e.stopPropagation();
-                      removeBenchmark(benchmark.symbol);
-                    }}
+                    key={result.symbol}
+                    className="flex flex-col px-3 py-2.5 text-sm cursor-pointer hover:bg-muted rounded-sm"
+                    onClick={() => addBenchmark(result)}
                   >
-                    <X className="h-3 w-3" />
-                  </Button>
-                )}
+                    <div className="font-medium flex justify-between">
+                      <span>{result.symbol}</span>
+                      <span className="text-xs text-muted-foreground">{result.typeDisp}</span>
+                    </div>
+                    <div className="text-xs text-muted-foreground truncate">
+                      {result.shortname || result.longname} • {result.exchDisp}
+                    </div>
+                  </div>
+                ))}
               </div>
+            </div>
+          )}
+        </div>
+
+        {/* Time Period Selector */}
+        <div className="flex items-center gap-3">
+          <span className="text-sm text-muted-foreground">Period:</span>
+          <div className="flex gap-1 bg-muted rounded-lg p-1">
+            {TIME_PERIODS.map((period) => (
+              <button
+                key={period.value}
+                onClick={() => setTimePeriod(period.value)}
+                className={`px-3 py-1 text-sm rounded-md transition-colors ${timePeriod === period.value
+                  ? "bg-background shadow-sm font-medium"
+                  : "text-muted-foreground hover:text-foreground"
+                  }`}
+              >
+                {period.label}
+              </button>
             ))}
           </div>
-        </CardContent>
-      </Card>
+        </div>
+
+        {/* Benchmark Checkboxes */}
+        <div className="flex flex-wrap gap-3">
+          {allBenchmarks.map((benchmark) => (
+            <div
+              key={benchmark.symbol}
+              className="flex items-center gap-2 border rounded-lg px-3 py-2 hover:bg-muted/50 transition-colors"
+            >
+              <Checkbox
+                id={benchmark.symbol}
+                checked={selectedBenchmarks.has(benchmark.symbol)}
+                onCheckedChange={() => toggleBenchmark(benchmark.symbol)}
+              />
+              <label
+                htmlFor={benchmark.symbol}
+                className="text-sm font-medium cursor-pointer flex items-center gap-2"
+              >
+                <div
+                  className="w-3 h-3 rounded-full"
+                  style={{ backgroundColor: benchmark.color }}
+                />
+                {benchmark.name}
+              </label>
+              {!PREDEFINED_BENCHMARKS.find(b => b.symbol === benchmark.symbol) && (
+                <Button
+                  variant="ghost"
+                  size="icon"
+                  className="h-5 w-5 ml-1"
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    removeBenchmark(benchmark.symbol);
+                  }}
+                >
+                  <X className="h-3 w-3" />
+                </Button>
+              )}
+            </div>
+          ))}
+        </div>
+      </div>
 
       {/* Summary Cards */}
       <div className="grid gap-4 md:grid-cols-4">

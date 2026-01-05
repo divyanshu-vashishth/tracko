@@ -8,9 +8,12 @@
  * @module
  */
 
+import type * as ai from "../ai.js";
 import type * as auth from "../auth.js";
+import type * as chatHistory from "../chatHistory.js";
 import type * as exchangeRates from "../exchangeRates.js";
 import type * as http from "../http.js";
+import type * as journal from "../journal.js";
 import type * as news from "../news.js";
 import type * as portfolioImport from "../portfolioImport.js";
 import type * as portfolios from "../portfolios.js";
@@ -24,9 +27,12 @@ import type {
 } from "convex/server";
 
 declare const fullApi: ApiFromModules<{
+  ai: typeof ai;
   auth: typeof auth;
+  chatHistory: typeof chatHistory;
   exchangeRates: typeof exchangeRates;
   http: typeof http;
+  journal: typeof journal;
   news: typeof news;
   portfolioImport: typeof portfolioImport;
   portfolios: typeof portfolios;

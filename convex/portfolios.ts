@@ -82,38 +82,38 @@ export const addHolding = mutation({
 
     // Check if holding exists
     const existingHolding = await ctx.db
-        .query("holdings")
-        .withIndex("by_user", (q) => q.eq("userId", userId))
-        .filter((q) => q.eq(q.field("symbol"), args.symbol))
-        .first();
+      .query("holdings")
+      .withIndex("by_user", (q) => q.eq("userId", userId))
+      .filter((q) => q.eq(q.field("symbol"), args.symbol))
+      .first();
 
     if (existingHolding) {
-        // Update existing holding (average price calculation)
-        const totalShares = existingHolding.shares + args.shares;
-        const totalCost = (existingHolding.shares * existingHolding.avgPurchasePrice) + (args.shares * args.price);
-        const newAvgPrice = totalCost / totalShares;
+      // Update existing holding (average price calculation)
+      const totalShares = existingHolding.shares + args.shares;
+      const totalCost = (existingHolding.shares * existingHolding.avgPurchasePrice) + (args.shares * args.price);
+      const newAvgPrice = totalCost / totalShares;
 
-        await ctx.db.patch(existingHolding._id, {
-            shares: totalShares,
-            avgPurchasePrice: newAvgPrice,
-            currency: args.currency || existingHolding.currency, // Update currency if provided
-            updatedAt: Date.now(),
-        });
+      await ctx.db.patch(existingHolding._id, {
+        shares: totalShares,
+        avgPurchasePrice: newAvgPrice,
+        currency: args.currency || existingHolding.currency, // Update currency if provided
+        updatedAt: Date.now(),
+      });
     } else {
-        await ctx.db.insert("holdings", {
-            userId,
-            portfolioId: portfolio._id,
-            symbol: args.symbol,
-            name: args.name,
-            shares: args.shares,
-            avgPurchasePrice: args.price,
-            currentPrice: args.price,
-            totalValue: args.shares * args.price,
-            sector: args.sector,
-            currency: args.currency,
-            createdAt: Date.now(),
-            updatedAt: Date.now(),
-        });
+      await ctx.db.insert("holdings", {
+        userId,
+        portfolioId: portfolio._id,
+        symbol: args.symbol,
+        name: args.name,
+        shares: args.shares,
+        avgPurchasePrice: args.price,
+        currentPrice: args.price,
+        totalValue: args.shares * args.price,
+        sector: args.sector,
+        currency: args.currency,
+        createdAt: Date.now(),
+        updatedAt: Date.now(),
+      });
     }
   }
 });
@@ -141,8 +141,8 @@ export const updateHolding = mutation({
 
     // Recalculate total value if shares changed (using currentPrice if available, else avgPrice)
     if (args.shares !== undefined) {
-        const price = holding.currentPrice || (args.price ?? holding.avgPurchasePrice);
-        updates.totalValue = args.shares * price;
+      const price = holding.currentPrice || (args.price ?? holding.avgPurchasePrice);
+      updates.totalValue = args.shares * price;
     }
 
     await ctx.db.patch(args.id, updates);
@@ -164,4 +164,59 @@ export const deleteHolding = mutation({
 
     await ctx.db.delete(args.id);
   }
+});
+
+// Get user preferences including investor profile
+export const getUserPreferences = query({
+  args: {},
+  handler: async (ctx) => {
+    const userId = await getAuthUserId(ctx);
+    if (!userId) return null;
+
+    const preferences = await ctx.db
+      .query("userPreferences")
+      .withIndex("by_user", (q) => q.eq("userId", userId))
+      .first();
+
+    return preferences;
+  },
+});
+
+// Update user preferences including investor profile
+export const updateUserPreferences = mutation({
+  args: {
+    currency: v.optional(v.string()),
+    investorProfile: v.optional(
+      v.object({
+        riskAppetite: v.union(v.literal("aggressive"), v.literal("moderate"), v.literal("defensive")),
+        investmentHorizon: v.optional(v.string()),
+        investmentGoals: v.optional(v.string()),
+        monthlyInvestment: v.optional(v.number()),
+      })
+    ),
+  },
+  handler: async (ctx, args) => {
+    const userId = await getAuthUserId(ctx);
+    if (!userId) throw new Error("Not authenticated");
+
+    const existing = await ctx.db
+      .query("userPreferences")
+      .withIndex("by_user", (q) => q.eq("userId", userId))
+      .first();
+
+    if (existing) {
+      await ctx.db.patch(existing._id, {
+        ...(args.currency && { currency: args.currency }),
+        ...(args.investorProfile && { investorProfile: args.investorProfile }),
+        updatedAt: Date.now(),
+      });
+    } else {
+      await ctx.db.insert("userPreferences", {
+        userId,
+        currency: args.currency,
+        investorProfile: args.investorProfile,
+        updatedAt: Date.now(),
+      });
+    }
+  },
 });

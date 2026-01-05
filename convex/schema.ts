@@ -87,6 +87,15 @@ const schema = defineSchema({
       })
     ),
     defaultPortfolioId: v.optional(v.id("portfolios")),
+    // Investor profile for AI context
+    investorProfile: v.optional(
+      v.object({
+        riskAppetite: v.union(v.literal("aggressive"), v.literal("moderate"), v.literal("defensive")),
+        investmentHorizon: v.optional(v.string()), // "short-term", "medium-term", "long-term"
+        investmentGoals: v.optional(v.string()), // Free text
+        monthlyInvestment: v.optional(v.number()), // Monthly investment amount
+      })
+    ),
     updatedAt: v.number(),
   }).index("by_user", ["userId"]),
 
@@ -99,6 +108,32 @@ const schema = defineSchema({
     publishedAt: v.number(),
     symbol: v.optional(v.string()), // Related stock symbol if applicable
     createdAt: v.number(),
+  }).index("by_user", ["userId"]),
+
+  // Journal Entries - Daily trading journal
+  journalEntries: defineTable({
+    userId: v.id("users"),
+    date: v.number(), // Unix timestamp (start of day UTC)
+    netPnL: v.number(), // Net profit/loss for the day
+    tradeCount: v.number(), // Number of trades
+    tradeInsights: v.optional(v.string()), // Rich text notes (What, Which, Why)
+    createdAt: v.number(),
+    updatedAt: v.number(),
+  })
+    .index("by_user", ["userId"])
+    .index("by_user_date", ["userId", "date"]),
+
+  // Chat History - AI conversation memory
+  chatHistory: defineTable({
+    userId: v.id("users"),
+    messages: v.array(
+      v.object({
+        role: v.union(v.literal("user"), v.literal("assistant")),
+        content: v.string(),
+        timestamp: v.number(),
+      })
+    ),
+    updatedAt: v.number(),
   }).index("by_user", ["userId"]),
 });
 

@@ -2,16 +2,21 @@
 alwaysApply: true
 ---
 
-```
-don't write asChild in Button
-like this:
+# Shadcn UI / Base UI Rules for This Project
+
+## Avoiding Nested Buttons
+
+### Button with Link
+Don't write asChild in Button:
+```tsx
+// Incorrect
 <Button asChild>
   <Link href="/dashboard">
     Dashboard
   </Link>
 </Button>
 
-but write this:
+// Correct
 <Button>
   <Link href="/dashboard">
     Dashboard
@@ -19,8 +24,7 @@ but write this:
 </Button>
 ```
 
-### Avoiding Nested Buttons with Triggers
-
+### Dropdown/Dialog/Alert Triggers
 To prevent hydration errors from nested `<button>` elements, use the `render` prop on trigger components (like `DropdownMenuTrigger`, `AlertDialogTrigger`, etc.) when the trigger itself should be a styled button.
 
 **Correct Usage:**
@@ -47,8 +51,83 @@ Avoid `asChild` on triggers (as it can lead to nested buttons or unrecognized pr
   <Button>Trigger</Button>
 </DropdownMenuTrigger>
 
-// Incorrect: `asChild` can also lead to errors if not supported correctly
+// Incorrect: `asChild` causes nested buttons 
 <DropdownMenuTrigger asChild>
   <Button>Trigger</Button>
 </DropdownMenuTrigger>
+```
+
+## Cards and Overflow
+
+### Dropdown Menus Inside Cards
+When placing dropdown menus inside Cards, the dropdown may be clipped by the card's overflow. Solutions:
+
+1. **Use higher z-index** on the dropdown (z-[100] or higher)
+2. **Remove the Card wrapper** and use a simple div with border instead:
+```tsx
+// Instead of Card
+<div className="border rounded-lg p-6 space-y-4">
+  <h3 className="text-lg font-semibold">Title</h3>
+  <p className="text-sm text-muted-foreground">Description</p>
+  
+  <div className="relative">
+    <DropdownMenu>
+      <DropdownMenuTrigger render={<Button variant="outline" size="sm" />}>
+        Options <ChevronDown className="ml-2 h-4 w-4" />
+      </DropdownMenuTrigger>
+      <DropdownMenuContent className="z-[100]">
+        {/* Menu items */}
+      </DropdownMenuContent>
+    </DropdownMenu>
+  </div>
+</div>
+```
+
+## Flag Icons
+
+Use the `flag-icons` library for country flags:
+```tsx
+import "flag-icons/css/flag-icons.min.css";
+
+// Usage
+<span className="fi fi-in" /> {/* India */}
+<span className="fi fi-us" /> {/* USA */}
+<span className="fi fi-cn" /> {/* China */}
+<span className="fi fi-jp" /> {/* Japan */}
+<span className="fi fi-eu" /> {/* EU */}
+```
+
+## ScrollArea and Refs
+
+`ScrollArea` from this project's UI components doesn't accept a `ref` prop directly. Wrap the content in a div with the ref:
+
+```tsx
+// Incorrect
+<ScrollArea ref={scrollRef}>
+  {content}
+</ScrollArea>
+
+// Correct
+<ScrollArea>
+  <div ref={scrollRef}>
+    {content}
+  </div>
+</ScrollArea>
+```
+
+## yahoo-finance2 Library
+
+Always instantiate the class:
+```typescript
+import YahooFinance from "yahoo-finance2";
+const yahooFinance = new YahooFinance({ suppressNotices: ['yahooSurvey'] });
+const quote = await yahooFinance.quote("AAPL");
+```
+
+## Convex Auth
+
+Always import `getAuthUserId` from `@convex-dev/auth/server`:
+```typescript
+import { getAuthUserId } from "@convex-dev/auth/server";
+const userId = await getAuthUserId(ctx);
 ```

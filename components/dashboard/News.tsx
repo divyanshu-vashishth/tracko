@@ -1,10 +1,12 @@
 "use client"
 import { useAction, useQuery } from "convex/react";
 import { api } from "@/convex/_generated/api";
-import { useEffect, useState } from "react";
+import { useEffect, useState, useMemo } from "react";
 import { Skeleton } from "@/components/ui/skeleton";
-import { Checkbox } from "@/components/ui/checkbox";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
+import { Input } from "@/components/ui/input";
+import { Search } from "lucide-react";
+import { Button } from "@/components/ui/button";
 
 function formatTimeAgo(dateString: string): string {
   const date = new Date(dateString);
@@ -39,18 +41,13 @@ function NewsSkeleton() {
   );
 }
 
-// Generate unique colors for stocks
-const STOCK_COLORS = [
-  "#3b82f6", "#10b981", "#f59e0b", "#8b5cf6", "#ef4444",
-  "#06b6d4", "#ec4899", "#14b8a6", "#a855f7", "#f97316",
-];
-
 export function News() {
   const getNews = useAction(api.news.getMarketNews);
   const holdings = useQuery(api.portfolios.getHoldings);
   const [newsItems, setNewsItems] = useState<any[]>([]);
   const [isLoading, setIsLoading] = useState(true);
-  const [selectedSymbols, setSelectedSymbols] = useState<Set<string>>(new Set());
+  const [filterByPortfolio, setFilterByPortfolio] = useState(false);
+  const [searchQuery, setSearchQuery] = useState("");
 
   useEffect(() => {
     setIsLoading(true);
@@ -60,47 +57,39 @@ export function News() {
     }).catch(() => setIsLoading(false));
   }, [getNews]);
 
-  const portfolioSymbols = holdings ? Array.from(new Set(holdings.map((h: any) => h.symbol))) : [];
+  const portfolioSymbols: string[] = holdings
+    ? Array.from(new Set(holdings.map((h: any) => h.symbol.replace(".NS", "").replace(".BO", ""))))
+    : [];
 
-  const toggleSymbol = (symbol: string) => {
-    setSelectedSymbols(prev => {
-      const newSet = new Set(prev);
-      if (newSet.has(symbol)) {
-        newSet.delete(symbol);
-      } else {
-        newSet.add(symbol);
-      }
-      return newSet;
-    });
-  };
-
-  // Filter news based on selected symbols
-  const filteredNews = selectedSymbols.size > 0
-    ? newsItems.filter(item => {
+  // Filter news based on portfolio filter
+  const portfolioFilteredNews = useMemo(() => {
+    if (!filterByPortfolio || portfolioSymbols.length === 0) return newsItems;
+    return newsItems.filter(item => {
       const titleUpper = item.title.toUpperCase();
       const contentUpper = (item.contentSnippet || "").toUpperCase();
-      return Array.from(selectedSymbols).some((symbol: string) =>
+      return portfolioSymbols.some((symbol: string) =>
         titleUpper.includes(symbol) || contentUpper.includes(symbol)
       );
-    })
-    : newsItems;
+    });
+  }, [newsItems, filterByPortfolio, portfolioSymbols]);
+
+  // Then filter by search query
+  const filteredNews = useMemo(() => {
+    if (!searchQuery.trim()) return portfolioFilteredNews;
+    const query = searchQuery.toLowerCase();
+    return portfolioFilteredNews.filter(item =>
+      item.title.toLowerCase().includes(query) ||
+      (item.contentSnippet || "").toLowerCase().includes(query)
+    );
+  }, [portfolioFilteredNews, searchQuery]);
 
   if (isLoading) {
     return (
       <div className="space-y-6">
-        <Card>
-          <CardHeader>
-            <Skeleton className="h-6 w-48" />
-            <Skeleton className="h-4 w-64 mt-2" />
-          </CardHeader>
-          <CardContent>
-            <div className="flex gap-3">
-              {[1, 2, 3].map(i => (
-                <Skeleton key={i} className="h-10 w-24" />
-              ))}
-            </div>
-          </CardContent>
-        </Card>
+        <div className="flex items-center justify-between flex-wrap gap-4">
+          <Skeleton className="h-8 w-48" />
+          <Skeleton className="h-10 w-[300px]" />
+        </div>
         <NewsSkeleton />
       </div>
     );
@@ -116,45 +105,39 @@ export function News() {
 
   return (
     <div className="space-y-6">
-      {/* Stock Filter Section */}
-      {portfolioSymbols.length > 0 && (
-        <Card>
-          <CardHeader className="pb-3">
-            <CardTitle className="text-lg">Filter by Stock</CardTitle>
-            <CardDescription>Select stocks to filter relevant news</CardDescription>
-          </CardHeader>
-          <CardContent>
-            <div className="flex flex-wrap gap-3">
-              {portfolioSymbols.map((symbol, index) => (
-                <div
-                  key={symbol}
-                  className="flex items-center gap-2 border rounded-lg px-3 py-2 hover:bg-muted/50 transition-colors"
-                >
-                  <Checkbox
-                    id={`stock-${symbol}`}
-                    checked={selectedSymbols.has(symbol)}
-                    onCheckedChange={() => toggleSymbol(symbol)}
-                  />
-                  <label
-                    htmlFor={`stock-${symbol}`}
-                    className="text-sm font-medium cursor-pointer flex items-center gap-2"
-                  >
-                    <div
-                      className="w-3 h-3 rounded-full"
-                      style={{ backgroundColor: STOCK_COLORS[index % STOCK_COLORS.length] }}
-                    />
-                    {symbol}
-                  </label>
-                </div>
-              ))}
-            </div>
-            {selectedSymbols.size > 0 && (
-              <p className="text-sm text-muted-foreground mt-3">
-                Showing {filteredNews.length} news for selected stocks
-              </p>
-            )}
-          </CardContent>
-        </Card>
+      {/* Search and Filter Section */}
+      <div className="flex items-center justify-between flex-wrap gap-4">
+        <div className="flex items-center gap-3">
+          <h2 className="text-lg font-semibold">Market News</h2>
+          {portfolioSymbols.length > 0 && (
+            <Button
+              variant={filterByPortfolio ? "default" : "outline"}
+              size="sm"
+              onClick={() => setFilterByPortfolio(!filterByPortfolio)}
+            >
+              {filterByPortfolio ? "Show All News" : "Filter by Portfolio"}
+            </Button>
+          )}
+        </div>
+
+        {/* Search Input */}
+        <div className="relative w-full sm:w-auto">
+          <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+          <Input
+            value={searchQuery}
+            onChange={(e) => setSearchQuery(e.target.value)}
+            placeholder="Search news..."
+            className="pl-10 w-full sm:w-[300px]"
+          />
+        </div>
+      </div>
+
+      {/* Status */}
+      {(filterByPortfolio || searchQuery) && (
+        <p className="text-sm text-muted-foreground">
+          Showing {filteredNews.length} of {newsItems.length} articles
+          {filterByPortfolio && " (filtered by portfolio stocks)"}
+        </p>
       )}
 
       {/* News Grid */}
@@ -176,9 +159,9 @@ export function News() {
         ))}
       </div>
 
-      {filteredNews.length === 0 && selectedSymbols.size > 0 && (
+      {filteredNews.length === 0 && (
         <div className="text-center text-muted-foreground py-10">
-          No news found for selected stocks.
+          No news found {searchQuery ? `for "${searchQuery}"` : "for your portfolio stocks"}.
         </div>
       )}
     </div>
