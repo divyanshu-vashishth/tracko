@@ -52,7 +52,7 @@ export default function JournalPage() {
     const [isDialogOpen, setIsDialogOpen] = useState(false);
 
     // Form state
-    const [netPnL, setNetPnL] = useState<number>(0);
+    const [netPnL, setNetPnL] = useState<number | undefined>(undefined);
     const [tradeCount, setTradeCount] = useState<number>(0);
     const [tradeInsights, setTradeInsights] = useState<string>("");
 
@@ -87,7 +87,7 @@ export default function JournalPage() {
         const existing = entriesMap.get(dateKey);
 
         setSelectedDate(date);
-        setNetPnL(existing?.netPnL || 0);
+        setNetPnL(existing?.netPnL);
         setTradeCount(existing?.tradeCount || 0);
         setTradeInsights(existing?.tradeInsights || "");
         setIsDialogOpen(true);
@@ -99,7 +99,7 @@ export default function JournalPage() {
         try {
             await upsertEntry({
                 date: getStartOfDay(selectedDate),
-                netPnL,
+                netPnL: netPnL ?? 0,
                 tradeCount,
                 tradeInsights: tradeInsights || undefined,
             });
@@ -166,7 +166,7 @@ export default function JournalPage() {
                     setSelectedDate(today);
                     const dateKey = getStartOfDay(today);
                     const existing = entriesMap.get(dateKey);
-                    setNetPnL(existing?.netPnL || 0);
+                    setNetPnL(existing?.netPnL);
                     setTradeCount(existing?.tradeCount || 0);
                     setTradeInsights(existing?.tradeInsights || "");
                     setIsDialogOpen(true);
@@ -251,8 +251,8 @@ export default function JournalPage() {
                                 <Input
                                     id="netPnL"
                                     type="number"
-                                    value={netPnL}
-                                    onChange={(e) => setNetPnL(parseFloat(e.target.value) || 0)}
+                                    value={netPnL ?? ""}
+                                    onChange={(e) => setNetPnL(e.target.value === "" ? undefined : parseFloat(e.target.value))}
                                     placeholder="e.g., 5000 or -2000"
                                 />
                             </div>
@@ -293,7 +293,7 @@ export default function JournalPage() {
                             <Button variant="outline" onClick={() => setIsDialogOpen(false)}>
                                 Cancel
                             </Button>
-                            <Button onClick={handleSave}>Save Entry</Button>
+                            <Button onClick={handleSave}>Save</Button>
                         </div>
                     </DialogFooter>
                 </DialogContent>

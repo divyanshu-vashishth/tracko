@@ -10,11 +10,11 @@ export function CallToAction() {
                 <div className="absolute left-1/2 -bottom-4 -translate-x-1/2 w-24 h-8 bg-muted rounded-t-2xl border-x border-t" />
 
                 <h2 className="text-2xl md:text-3xl lg:text-4xl font-bold mb-4">
-                    Create, Sell and Grow
+                    Track, Analyze, Manage
                 </h2>
                 <p className="text-muted-foreground mb-8 max-w-lg mx-auto">
-                    Join a community of over 1000+ companies and developers
-                    who have already discovered the power of Tracko.
+                    Join thousands of investors who track their portfolios,
+                    analyze performance, and make smarter investment decisions.
                 </p>
 
                 <Button size="lg" className="h-12 px-8">
