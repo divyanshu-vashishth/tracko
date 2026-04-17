@@ -125,11 +125,11 @@ export default function HeroSection() {
               priority
             />
             <div className="absolute inset-0 bg-linear-to-t from-black/20 via-transparent to-transparent" />
-            <div className="absolute -right-2 top-6 rounded-xl border border-border/60 bg-background/92 px-3 py-2 text-xs shadow-md backdrop-blur-sm md:-right-4 md:text-sm">
+            <div className="absolute top-4 rounded-xl border border-border/60 bg-background/92 px-3 py-2 text-xs shadow-md backdrop-blur-sm md:right-4 md:text-sm">
               <p className="font-medium">Nifty50 vs Portfolio</p>
               <p className="text-emerald-600">+3.8% this month</p>
             </div>
-            <div className="absolute -left-2 bottom-6 rounded-xl border border-border/60 bg-background/92 px-3 py-2 text-xs shadow-md backdrop-blur-sm md:-left-4 md:text-sm">
+            <div className="absolute bottom-4 rounded-xl border border-border/60 bg-background/92 px-3 py-2 text-xs shadow-md backdrop-blur-sm md:left-4 md:text-sm">
               <p className="font-medium">AI Insight</p>
               <p className="text-muted-foreground">Diversify financial sector weight</p>
             </div>
