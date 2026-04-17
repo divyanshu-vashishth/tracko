@@ -45,7 +45,8 @@ export const searchStocks = action({
       );
       return sanitize(quotes);
     } catch (error) {
-      console.error("Error searching stocks:", error);
+      console.error("Error searching stocks:", error); 
+      // throw new Error("Error searching stocks");
       return [];
     }
   },
