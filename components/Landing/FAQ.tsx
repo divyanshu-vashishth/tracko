@@ -41,13 +41,7 @@ export default function FAQs() {
                         <h2 className="text-foreground text-3xl md:text-4xl font-bold">FAQs</h2>
                         <p className="text-muted-foreground mt-4 text-balance text-lg">Your questions answered</p>
                         <p className="text-muted-foreground mt-6 hidden md:block">
-                            Can't find what you're looking for? Contact us on{' '}
-                            <Link
-                                href="https://github.com"
-                                target="_blank"
-                                className="text-primary font-medium hover:underline">
-                                GitHub
-                            </Link>
+                            Can't find what you're looking for? Contact us at <a href="mailto:support@tracko.com" className="text-primary font-medium hover:underline">support@tracko.com</a>
                         </p>
                     </div>
 

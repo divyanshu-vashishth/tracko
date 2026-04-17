@@ -261,11 +261,16 @@ export default function SettingsPage() {
                 <div className="flex items-center justify-between">
                     <div className="flex items-center gap-3">
                         {theme === "dark" ? (
-                            <Moon className="h-5 w-5" />
+                            <>
+                                <Moon className="h-5 w-5" />
+                                <Label htmlFor="dark-mode">Dark Mode</Label>
+                            </>
                         ) : (
-                            <Sun className="h-5 w-5" />
+                            <>
+                                <Sun className="h-5 w-5" />
+                                <Label htmlFor="dark-mode">Light Mode</Label>
+                            </>
                         )}
-                        <Label htmlFor="dark-mode">Dark Mode</Label>
                     </div>
                     <Switch
                         id="dark-mode"

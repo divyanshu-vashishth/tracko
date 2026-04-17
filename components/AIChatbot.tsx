@@ -3,17 +3,11 @@
 import { useState, useRef, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
-import { AudioLines, X, Send, Sparkles, User, ArrowUp, Trash2 } from "lucide-react";
-import { useAction, useQuery, useMutation } from "convex/react";
+import { AudioLines, X, Sparkles, User, ArrowUp, Trash2 } from "lucide-react";
+import { useAction, useMutation, useQuery } from "convex/react";
 import { api } from "@/convex/_generated/api";
 import { cn } from "@/lib/utils";
 import ReactMarkdown from "react-markdown";
-
-interface Message {
-    role: "user" | "assistant";
-    content: string;
-    timestamp?: number;
-}
 
 const SUGGESTED_QUESTIONS = [
     "Analyze my portfolio performance",
@@ -22,6 +16,10 @@ const SUGGESTED_QUESTIONS = [
     "How can I diversify my portfolio?",
     "Explain my sector allocation",
 ];
+
+type NewsItem = {
+    title?: string;
+};
 
 // Typing dots animation component
 function TypingIndicator() {
@@ -37,39 +35,44 @@ function TypingIndicator() {
 export function AIChatbot() {
     const holdings = useQuery(api.portfolios.getHoldings);
     const preferences = useQuery(api.portfolios.getUserPreferences);
-    const chatHistory = useQuery(api.chatHistory.getChatHistory);
     const getNews = useAction(api.news.getMarketNews);
-    const chat = useAction(api.ai.chat);
-    const saveChatHistory = useMutation(api.chatHistory.saveChatHistory);
-    const clearChatHistory = useMutation(api.chatHistory.clearChatHistory);
+    const thread = useQuery(api.ai.getThread);
+    const ensureThread = useMutation(api.ai.ensureThread);
+    const sendMessage = useMutation(api.ai.sendMessage);
+    const clearThread = useMutation(api.ai.clearThread);
+    const paginatedMessages = useQuery(
+        api.ai.listThreadMessages,
+        thread?.threadId
+            ? {
+                threadId: thread.threadId,
+                paginationOpts: { cursor: null, numItems: 50 },
+            }
+            : "skip",
+    );
 
     const [isOpen, setIsOpen] = useState(false);
-    const [messages, setMessages] = useState<Message[]>([]);
     const [input, setInput] = useState("");
-    const [isLoading, setIsLoading] = useState(false);
+    const [isSending, setIsSending] = useState(false);
     const [newsContext, setNewsContext] = useState("");
+    const [pendingUserMessage, setPendingUserMessage] = useState<string | null>(null);
     const scrollRef = useRef<HTMLDivElement>(null);
     const textareaRef = useRef<HTMLTextAreaElement>(null);
 
-    // Load chat history on mount
+    // Ensure a thread exists for the user.
     useEffect(() => {
-        if (chatHistory?.messages) {
-            setMessages(chatHistory.messages.map(m => ({
-                role: m.role,
-                content: m.content,
-                timestamp: m.timestamp,
-            })));
+        if (thread === null) {
+            void ensureThread({});
         }
-    }, [chatHistory]);
+    }, [thread, ensureThread]);
 
     // Fetch news context when chat opens
     useEffect(() => {
         if (isOpen && !newsContext) {
-            getNews().then((news) => {
-                if (news) {
+            getNews().then((news: NewsItem[]) => {
+                if (news?.length) {
                     const newsText = news
                         .slice(0, 30)
-                        .map((n: any) => `- ${n.title}`)
+                        .map((n) => `- ${n.title ?? "Untitled update"}`)
                         .join("\n");
                     setNewsContext(newsText);
                 }
@@ -82,7 +85,7 @@ export function AIChatbot() {
         if (scrollRef.current) {
             scrollRef.current.scrollTop = scrollRef.current.scrollHeight;
         }
-    }, [messages, isLoading]);
+    }, [paginatedMessages, pendingUserMessage, isSending]);
 
     // Auto-resize textarea
     useEffect(() => {
@@ -104,57 +107,48 @@ export function AIChatbot() {
         ? `Investor Profile:\n- Risk Appetite: ${preferences.investorProfile.riskAppetite}\n- Investment Horizon: ${preferences.investorProfile.investmentHorizon || "Not specified"}\n- Investment Goals: ${preferences.investorProfile.investmentGoals || "Not specified"}\n- Monthly Investment: ₹${preferences.investorProfile.monthlyInvestment || "Not specified"}`
         : "";
 
-    // Build conversation history for AI context (last 10 messages)
-    const conversationHistory = messages.slice(-10).map(m =>
-        `${m.role === "user" ? "User" : "Assistant"}: ${m.content}`
-    ).join("\n\n");
+    const persistedMessages = (paginatedMessages?.page ?? []).map((message) => ({
+        role: message.role as "user" | "assistant",
+        content: message.text ?? "",
+    }));
+    const messages = pendingUserMessage
+        ? [...persistedMessages, { role: "user" as const, content: pendingUserMessage }]
+        : persistedMessages;
+    const lastPersistedMessage = persistedMessages[persistedMessages.length - 1];
+    const isAwaitingAssistant =
+        !!lastPersistedMessage &&
+        lastPersistedMessage.role === "user" &&
+        !pendingUserMessage;
+    const isLoading = isSending || isAwaitingAssistant;
 
     const handleSend = async () => {
-        if (!input.trim() || isLoading) return;
+        if (!input.trim() || isSending) return;
 
         const userMessage = input.trim();
-        const timestamp = Date.now();
         setInput("");
-
-        const newMessages = [...messages, { role: "user" as const, content: userMessage, timestamp }];
-        setMessages(newMessages);
-        setIsLoading(true);
+        setPendingUserMessage(userMessage);
+        setIsSending(true);
 
         try {
-            // Include conversation history in context
-            const fullContext = `${portfolioContext}\n\n${investorProfileContext}\n\nRecent Conversation:\n${conversationHistory}\n\nUser: ${userMessage}`;
-
-            const result = await chat({
-                message: userMessage,
-                portfolioContext: fullContext,
+            await sendMessage({
+                prompt: userMessage,
+                portfolioContext,
                 newsContext,
+                investorProfile: investorProfileContext,
             });
-
-            const assistantMessage = { role: "assistant" as const, content: result.response, timestamp: Date.now() };
-            const updatedMessages = [...newMessages, assistantMessage];
-            setMessages(updatedMessages);
-
-            // Save to database
-            await saveChatHistory({
-                messages: updatedMessages.map(m => ({
-                    role: m.role,
-                    content: m.content,
-                    timestamp: m.timestamp || Date.now(),
-                })),
-            });
+            setPendingUserMessage(null);
         } catch (error) {
             console.error("Chat error:", error);
-            const errorMessage = { role: "assistant" as const, content: "Sorry, I encountered an error. Please try again.", timestamp: Date.now() };
-            setMessages((prev) => [...prev, errorMessage]);
+            setPendingUserMessage(null);
         } finally {
-            setIsLoading(false);
+            setIsSending(false);
         }
     };
 
     const handleClearChat = async () => {
         try {
-            await clearChatHistory({});
-            setMessages([]);
+            await clearThread({});
+            setPendingUserMessage(null);
         } catch (error) {
             console.error("Failed to clear chat:", error);
         }
@@ -179,7 +173,7 @@ export function AIChatbot() {
                 onClick={() => setIsOpen(!isOpen)}
                 className={cn(
                     "fixed bottom-6 right-6 z-50 rounded-full p-4 shadow-lg transition-all duration-300",
-                    "bg-gradient-to-r from-primary to-primary/80 hover:from-primary/90 hover:to-primary/70",
+                    "bg-linear-to-r from-primary to-primary/80 hover:from-primary/90 hover:to-primary/70",
                     "text-primary-foreground",
                     isOpen && "scale-0 opacity-0"
                 )}
@@ -209,7 +203,7 @@ export function AIChatbot() {
                         </div>
                     </div>
                     <div className="flex items-center gap-1">
-                        {messages.length > 0 && (
+                        {persistedMessages.length > 0 && (
                             <Button variant="ghost" size="icon" onClick={handleClearChat} title="Clear chat">
                                 <Trash2 className="h-4 w-4" />
                             </Button>
@@ -225,7 +219,7 @@ export function AIChatbot() {
                     {messages.length === 0 ? (
                         <div className="space-y-4">
                             <p className="text-center text-muted-foreground text-sm">
-                                Hi! I'm Tracko AI. I can help you understand your portfolio, analyze market news, and provide investment insights.
+                                Hi! I&apos;m Tracko AI. I can help you understand your portfolio, analyze market news, and provide investment insights.
                             </p>
                             <div className="space-y-2">
                                 <p className="text-xs text-muted-foreground font-medium">Try asking:</p>
@@ -268,7 +262,7 @@ export function AIChatbot() {
                                                 <ReactMarkdown>{message.content}</ReactMarkdown>
                                             </div>
                                         ) : (
-                                            <span className="whitespace-pre-wrap break-words">{message.content}</span>
+                                            <span className="whitespace-pre-wrap wrap-break-word">{message.content}</span>
                                         )}
                                     </div>
                                     {message.role === "user" && (

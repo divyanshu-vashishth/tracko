@@ -135,6 +135,15 @@ const schema = defineSchema({
     ),
     updatedAt: v.number(),
   }).index("by_user", ["userId"]),
+
+  // Convex Agent thread mapping per authenticated user
+  aiThreads: defineTable({
+    userId: v.id("users"),
+    threadId: v.string(),
+    updatedAt: v.number(),
+  })
+    .index("by_user", ["userId"])
+    .index("by_user_thread", ["userId", "threadId"]),
 });
 
 export default schema;

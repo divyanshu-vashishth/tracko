@@ -4,7 +4,7 @@ import { Github, Twitter, Linkedin } from "lucide-react";
 
 export function Footer() {
   return (
-    <footer className="relative bg-muted/20 dark:bg-muted/10">
+    <footer className="relative border-t bg-muted/20">
 
       <div className="mx-auto max-w-7xl px-6 py-12 md:py-16">
         <div className="grid grid-cols-1 md:grid-cols-4 gap-10 md:gap-8">
@@ -14,8 +14,8 @@ export function Footer() {
               <Image src="/logo.svg" alt="Tracko" width={32} height={32} />
               <span className="font-bold text-xl">Tracko</span>
             </Link>
-            <p className="text-muted-foreground text-sm max-w-xs leading-relaxed">
-              The modern portfolio tracker for smart investors. Track, analyze, and optimize your investments with ease.
+            <p className="max-w-xs text-sm leading-relaxed text-muted-foreground">
+              Portfolio intelligence with less noise. Track, benchmark, and act with confidence.
             </p>
 
             {/* Social links */}
@@ -41,7 +41,7 @@ export function Footer() {
           <div>
             <h4 className="font-semibold text-sm mb-4">Product</h4>
             <ul className="space-y-3">
-              {["Features", "Pricing", "Changelog", "Documentation"].map((item) => (
+              {["Features", "AI Chat", "Journal", "Documentation"].map((item) => (
                 <li key={item}>
                   <Link
                     href="#"
@@ -57,7 +57,7 @@ export function Footer() {
           <div>
             <h4 className="font-semibold text-sm mb-4">Company</h4>
             <ul className="space-y-3">
-              {["About", "Blog", "Careers", "Contact"].map((item) => (
+              {["About", "Security", "Roadmap", "Contact"].map((item) => (
                 <li key={item}>
                   <Link
                     href="#"

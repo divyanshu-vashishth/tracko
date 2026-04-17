@@ -138,6 +138,18 @@
   .delay-500 {
     animation-delay: 500ms;
   }
+
+  .animate-float-slow {
+    animation: float-slow 10s ease-in-out infinite;
+  }
+
+  .animate-float-medium {
+    animation: float-medium 7s ease-in-out infinite;
+  }
+
+  .animate-float-fast {
+    animation: float-fast 5s ease-in-out infinite;
+  }
 }
 
 @keyframes fade-in {
@@ -148,5 +160,35 @@
   to {
     opacity: 1;
     transform: translateY(0);
+  }
+}
+
+@keyframes float-slow {
+  0%,
+  100% {
+    transform: translate3d(0, 0, 0);
+  }
+  50% {
+    transform: translate3d(0, -14px, 0);
+  }
+}
+
+@keyframes float-medium {
+  0%,
+  100% {
+    transform: translate3d(0, 0, 0);
+  }
+  50% {
+    transform: translate3d(6px, -10px, 0);
+  }
+}
+
+@keyframes float-fast {
+  0%,
+  100% {
+    transform: translate3d(0, 0, 0);
+  }
+  50% {
+    transform: translate3d(-5px, -8px, 0);
   }
 }

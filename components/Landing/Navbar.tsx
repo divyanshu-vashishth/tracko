@@ -39,10 +39,10 @@ export function Navbar() {
         className={cn(
           "fixed z-20 w-full transition-all duration-300",
           isScrolled &&
-          "bg-background/75 border-b border-black/5 backdrop-blur-lg",
+          "bg-background/85 border-b border-border/70 backdrop-blur-xl",
         )}
       >
-        <div className="mx-auto px-6 max-w-10/12">
+        <div className="mx-auto max-w-6xl px-6">
           <div className="relative flex flex-wrap items-center justify-between gap-6 py-3 lg:gap-0">
             <div className="flex w-full justify-between gap-6 lg:w-auto">
               <Link
@@ -70,7 +70,7 @@ export function Navbar() {
 
             <div
               data-state={menuState ? "active" : ""}
-              className="bg-background data-[state=active]:block lg:data-[state=active]:flex mb-6 hidden w-full flex-wrap items-center justify-end space-y-8 rounded-3xl border p-6 shadow-2xl shadow-zinc-300/20 md:flex-nowrap lg:m-0 lg:flex lg:w-fit lg:gap-6 lg:space-y-0 lg:border-transparent lg:bg-transparent lg:p-0 lg:shadow-none dark:shadow-none dark:lg:bg-transparent"
+              className="bg-background data-[state=active]:block lg:data-[state=active]:flex mb-6 hidden w-full flex-wrap items-center justify-end space-y-8 rounded-3xl border p-6 shadow-2xl shadow-zinc-300/20 md:flex-nowrap lg:m-0 lg:flex lg:w-fit lg:gap-6 lg:space-y-0 lg:border-transparent lg:bg-transparent lg:p-0 lg:shadow-none"
             >
               <div className="flex w-full flex-col space-y-3 sm:flex-row sm:gap-3 sm:space-y-0 md:w-fit">
                 {!isAuthPage && !isLoading && (
