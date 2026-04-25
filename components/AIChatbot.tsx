@@ -258,9 +258,13 @@ export function AIChatbot() {
                                         )}
                                     >
                                         {message.role === "assistant" ? (
-                                            <div className="prose prose-sm dark:prose-invert max-w-none [&>p]:mb-2 [&>p:last-child]:mb-0">
-                                                <ReactMarkdown>{message.content}</ReactMarkdown>
-                                            </div>
+                                            message.content ? (
+                                                <div className="prose prose-sm dark:prose-invert max-w-none [&>p]:mb-2 [&>p:last-child]:mb-0">
+                                                    <ReactMarkdown>{message.content}</ReactMarkdown>
+                                                </div>
+                                            ) : (
+                                                <TypingIndicator />
+                                            )
                                         ) : (
                                             <span className="whitespace-pre-wrap wrap-break-word">{message.content}</span>
                                         )}

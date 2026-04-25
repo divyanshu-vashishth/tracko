@@ -2,7 +2,6 @@
 import { action } from "./_generated/server";
 import { v } from "convex/values";
 import Parser from "rss-parser";
-
 const parser = new Parser();
 const MARKET_FEED_URL = "https://www.cnbctv18.com/commonfeeds/v1/cne/rss/market.xml";
 

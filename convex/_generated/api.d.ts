@@ -10,6 +10,7 @@
 
 import type * as ai from "../ai.js";
 import type * as auth from "../auth.js";
+import type * as bookmarks from "../bookmarks.js";
 import type * as chatHistory from "../chatHistory.js";
 import type * as exchangeRates from "../exchangeRates.js";
 import type * as http from "../http.js";
@@ -29,6 +30,7 @@ import type {
 declare const fullApi: ApiFromModules<{
   ai: typeof ai;
   auth: typeof auth;
+  bookmarks: typeof bookmarks;
   chatHistory: typeof chatHistory;
   exchangeRates: typeof exchangeRates;
   http: typeof http;

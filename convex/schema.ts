@@ -103,6 +103,7 @@ const schema = defineSchema({
   newsBookmarks: defineTable({
     userId: v.id("users"),
     title: v.string(),
+    contentSnippet: v.optional(v.string()),
     source: v.string(),
     url: v.string(),
     publishedAt: v.number(),

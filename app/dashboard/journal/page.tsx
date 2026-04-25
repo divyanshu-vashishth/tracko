@@ -53,7 +53,7 @@ export default function JournalPage() {
 
     // Form state
     const [netPnL, setNetPnL] = useState<number | undefined>(undefined);
-    const [tradeCount, setTradeCount] = useState<number>(0);
+    const [tradeCount, setTradeCount] = useState<number | undefined>(undefined);
     const [tradeInsights, setTradeInsights] = useState<string>("");
 
     const entries = useQuery(api.journal.getJournalEntries, {
@@ -88,7 +88,7 @@ export default function JournalPage() {
 
         setSelectedDate(date);
         setNetPnL(existing?.netPnL);
-        setTradeCount(existing?.tradeCount || 0);
+        setTradeCount(existing?.tradeCount ?? undefined);
         setTradeInsights(existing?.tradeInsights || "");
         setIsDialogOpen(true);
     };
@@ -100,7 +100,7 @@ export default function JournalPage() {
             await upsertEntry({
                 date: getStartOfDay(selectedDate),
                 netPnL: netPnL ?? 0,
-                tradeCount,
+                tradeCount: tradeCount ?? 0,
                 tradeInsights: tradeInsights || undefined,
             });
             toast.success("Journal entry saved!");
@@ -167,7 +167,7 @@ export default function JournalPage() {
                     const dateKey = getStartOfDay(today);
                     const existing = entriesMap.get(dateKey);
                     setNetPnL(existing?.netPnL);
-                    setTradeCount(existing?.tradeCount || 0);
+                    setTradeCount(existing?.tradeCount ?? undefined);
                     setTradeInsights(existing?.tradeInsights || "");
                     setIsDialogOpen(true);
                 }}>
@@ -262,8 +262,8 @@ export default function JournalPage() {
                                     id="tradeCount"
                                     type="number"
                                     min="0"
-                                    value={tradeCount}
-                                    onChange={(e) => setTradeCount(parseInt(e.target.value) || 0)}
+                                    value={tradeCount ?? ""}
+                                    onChange={(e) => setTradeCount(e.target.value === "" ? undefined : parseInt(e.target.value))}
                                     placeholder="e.g., 5"
                                 />
                             </div>

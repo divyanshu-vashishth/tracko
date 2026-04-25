@@ -12,7 +12,7 @@ const google = createGoogleGenerativeAI({
 
 const trackoAgent = new Agent(components.agent, {
   name: "Tracko AI",
-  languageModel: google("gemini-2.0-flash"),
+  languageModel: google("gemini-3-flash-preview"),
   maxSteps: 4,
   instructions: `You are Tracko AI, a portfolio assistant for Indian and US stock market investors.
 
