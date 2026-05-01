@@ -1,139 +1,40 @@
 "use client";
 
-import Image from "next/image";
 import { useRouter } from "next/navigation";
-import { ArrowRight, Sparkles } from "lucide-react";
 import { Button } from "@/components/ui/button";
 
 export default function HeroSection() {
   const router = useRouter();
 
   return (
-    <section className="relative overflow-hidden pt-28 pb-20 md:pt-36 md:pb-28">
-      <div className="absolute inset-0 bg-[radial-gradient(circle_at_top_right,rgba(83,140,240,0.18),transparent_45%),radial-gradient(circle_at_bottom_left,rgba(46,137,255,0.12),transparent_45%)]" />
-      <div className="absolute inset-x-0 top-0 h-px bg-linear-to-r from-transparent via-primary/40 to-transparent" />
-      <div className="pointer-events-none absolute inset-0 opacity-80">
-        <div className="absolute left-[12%] top-[16%] h-28 w-28 rounded-full bg-primary/15 blur-3xl animate-float-slow" />
-        <div className="absolute right-[18%] top-[36%] h-32 w-32 rounded-full bg-cyan-300/20 blur-3xl animate-float-medium" />
-        <div className="absolute bottom-[18%] left-[42%] h-24 w-24 rounded-full bg-indigo-300/15 blur-3xl animate-float-fast" />
-        <svg
-          aria-hidden="true"
-          className="absolute -top-24 -right-16 h-[360px] w-[360px] text-primary/25 animate-float-medium"
-          viewBox="0 0 320 320"
-          fill="none"
-        >
-          <circle cx="160" cy="160" r="110" stroke="currentColor" strokeWidth="1.4" strokeDasharray="8 9">
-            <animateTransform
-              attributeName="transform"
-              type="rotate"
-              from="0 160 160"
-              to="360 160 160"
-              dur="30s"
-              repeatCount="indefinite"
-            />
-          </circle>
-          <circle cx="160" cy="160" r="72" stroke="currentColor" strokeWidth="1.2" strokeDasharray="4 8">
-            <animateTransform
-              attributeName="transform"
-              type="rotate"
-              from="360 160 160"
-              to="0 160 160"
-              dur="18s"
-              repeatCount="indefinite"
-            />
-          </circle>
-        </svg>
-        <svg
-          aria-hidden="true"
-          className="absolute -bottom-16 -left-16 h-[260px] w-[260px] text-primary/20 animate-float-slow"
-          viewBox="0 0 280 280"
-          fill="none"
-        >
-          <path
-            d="M24 142C24 89.6 66.6 47 119 47H161C213.4 47 256 89.6 256 142C256 194.4 213.4 237 161 237H119C66.6 237 24 194.4 24 142Z"
-            stroke="currentColor"
-            strokeWidth="1.4"
-          >
-            <animate
-              attributeName="d"
-              dur="9s"
-              repeatCount="indefinite"
-              values="M24 142C24 89.6 66.6 47 119 47H161C213.4 47 256 89.6 256 142C256 194.4 213.4 237 161 237H119C66.6 237 24 194.4 24 142Z;
-                      M36 136C36 91.3 72.3 55 117 55H168C212.7 55 249 91.3 249 136C249 180.7 212.7 217 168 217H117C72.3 217 36 180.7 36 136Z;
-                      M24 142C24 89.6 66.6 47 119 47H161C213.4 47 256 89.6 256 142C256 194.4 213.4 237 161 237H119C66.6 237 24 194.4 24 142Z"
-            />
-          </path>
-        </svg>
-      </div>
-
-      <div className="relative mx-auto grid max-w-6xl gap-12 px-6 lg:grid-cols-[1.05fr_0.95fr] lg:items-center">
-        <div className="space-y-8">
-          <div className="inline-flex items-center gap-2 rounded-full border border-primary/20 bg-primary/10 px-3 py-1 text-xs font-medium text-primary">
-            <Sparkles className="size-3.5" />
-            AI-first portfolio intelligence
-          </div>
-
-          <div className="space-y-5">
-            <h1 className="max-w-xl text-pretty text-4xl font-semibold leading-tight tracking-tight md:text-5xl lg:text-6xl">
-              Build conviction in every investment decision.
-            </h1>
-            <p className="max-w-xl text-pretty text-base leading-relaxed text-muted-foreground md:text-lg">
-              Tracko combines real-time portfolio tracking, benchmark clarity, and conversational AI insights so you
-              can act faster with less noise.
-            </p>
-          </div>
-
-          <div className="flex flex-col items-start gap-3 sm:flex-row sm:items-center">
-            <Button size="lg" className="h-11 rounded-full px-6" onClick={() => router.push("/auth")}>
-              Get started
-              <ArrowRight className="ml-1 size-4" />
-            </Button>
-            <Button
-              size="lg"
-              variant="outline"
-              className="h-11 rounded-full px-6"
-              onClick={() => document.getElementById("features")?.scrollIntoView({ behavior: "smooth" })}
+    <section className="relative overflow-hidden bg-background pt-40 pb-20 md:pt-48 md:pb-28">
+      <div className="mx-auto max-w-7xl px-6 text-center">
+        <h1 className="mx-auto max-w-4xl font-display text-5xl font-medium tracking-tight text-foreground sm:text-7xl">
+          Portfolio management{" "}
+          <span className="relative whitespace-nowrap text-primary">
+            <svg
+              aria-hidden="true"
+              viewBox="0 0 418 42"
+              className="absolute top-2/3 left-0 h-[0.58em] w-full fill-primary/30"
+              preserveAspectRatio="none"
             >
-              Explore features
-            </Button>
-          </div>
-
-          <div className="grid grid-cols-3 gap-3 pt-1 text-sm">
-            <div className="rounded-xl border bg-background/80 p-3">
-              <p className="text-lg font-semibold">Real-time</p>
-              <p className="text-muted-foreground">Live prices</p>
-            </div>
-            <div className="rounded-xl border bg-background/80 p-3">
-              <p className="text-lg font-semibold">AI Chat</p>
-              <p className="text-muted-foreground">Thread memory</p>
-            </div>
-            <div className="rounded-xl border bg-background/80 p-3">
-              <p className="text-lg font-semibold">Benchmarks</p>
-              <p className="text-muted-foreground">Nifty & S&P</p>
-            </div>
-          </div>
-        </div>
-
-        <div className="relative">
-          <div className="relative aspect-16/13 overflow-hidden rounded-3xl border border-border/70 bg-linear-to-br from-slate-100 via-slate-50 to-blue-50 shadow-[0_35px_90px_-50px_rgba(32,92,192,0.5)]">
-            <Image
-              src="/dashboard.png"
-              alt="Tracko portfolio dashboard"
-              fill
-              sizes="(max-width: 1024px) 100vw, 45vw"
-              className="object-contain p-3 md:p-4"
-              priority
-            />
-            <div className="absolute inset-0 bg-linear-to-t from-black/20 via-transparent to-transparent" />
-            <div className="absolute top-4 rounded-xl border border-border/60 bg-background/92 px-3 py-2 text-xs shadow-md backdrop-blur-sm md:right-4 md:text-sm">
-              <p className="font-medium">Nifty50 vs Portfolio</p>
-              <p className="text-emerald-600">+3.8% this month</p>
-            </div>
-            <div className="absolute bottom-4 rounded-xl border border-border/60 bg-background/92 px-3 py-2 text-xs shadow-md backdrop-blur-sm md:left-4 md:text-sm">
-              <p className="font-medium">AI Insight</p>
-              <p className="text-muted-foreground">Diversify financial sector weight</p>
-            </div>
-          </div>
+              <path d="M203.371.916c-26.013-2.078-76.686 1.963-124.73 9.946L67.3 12.749C35.421 18.062 18.2 21.766 6.004 25.934 1.244 27.561.828 27.778.874 28.61c.051.951.56 2.236 1.183 2.936.36.404 2.169 1.406 3.528 1.961 1.97.808 6.046 1.683 9.145 1.952 1.343.117 3.332-.239 4.398-.788 1.13-.583 2.503-.996 3.013-.911.235.04.094.23-.314.425-2.28 1.096-7.146 1.48-11.832.936-3.791-.44-8.831-2.071-10.741-3.483-.984-.728-1.077-1.341-.295-1.922 1.41-1.05 4.795-2.086 10.37-3.171 14.896-2.906 43.14-7.53 73.024-11.951 31.424-4.646 72.846-9.155 106.67-11.602 36.326-2.63 76.513-2.26 111.41 1.031 34.254 3.23 68.643 9.873 92.513 17.868 6.69 2.242 12.164 4.887 13.91 6.695.833.856 1.503 1.11 2.395.903.655-.152 1.517-.674 1.914-1.157.49-.604.538-1.033.155-1.332-1.285-1.003-4.633-2.83-8.873-4.851-14.73-7.01-41.905-14.79-72.31-20.713-33.88-6.598-75.13-10.428-115.17-10.825-11.604-.115-26.685-.02-33.565.212z" />
+            </svg>
+            <span className="relative">made simple</span>
+          </span>{" "}
+          for serious investors.
+        </h1>
+        <p className="mx-auto mt-6 max-w-2xl text-lg tracking-tight text-muted-foreground">
+          Tracko combines real-time portfolio tracking, benchmark clarity, and conversational AI insights so you can act faster with less noise.
+        </p>
+        <div className="mt-10 flex justify-center gap-x-6">
+          <Button
+            size="lg"
+            className="px-8 text-base font-semibold"
+            onClick={() => router.push("/auth")}
+          >
+            Get started
+          </Button>
         </div>
       </div>
     </section>

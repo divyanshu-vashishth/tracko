@@ -1,5 +1,5 @@
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from '@/components/ui/accordion'
-import Link from 'next/link'
+import Image from 'next/image'
 
 export default function FAQs() {
     const faqItems = [
@@ -31,44 +31,42 @@ export default function FAQs() {
     ]
 
     return (
-        <section className="relative py-16 md:py-24">
-            {/* Simple light bluish gradient - top half sky, bottom half white/background */}
-            <div className="absolute inset-0 bg-gradient-to-b from-sky-50 via-sky-50/50 to-background dark:from-sky-950/30 dark:via-sky-900/10 dark:to-background" />
+        <section className="relative overflow-hidden bg-background py-20 md:py-32">
+            <div className="absolute top-0 left-1/2 -translate-x-1/2 w-full max-w-7xl h-[400px] opacity-40 pointer-events-none">
+                <div className="absolute left-0 top-0 w-1/2 h-full bg-secondary/20 blur-[100px] rounded-full mix-blend-multiply" />
+                <div className="absolute right-0 top-0 w-1/2 h-full bg-primary/20 blur-[100px] rounded-full mix-blend-multiply" />
+            </div>
 
-            <div className="relative mx-auto max-w-5xl px-6">
-                <div className="grid gap-8 md:grid-cols-5 md:gap-12">
-                    <div className="md:col-span-2">
-                        <h2 className="text-foreground text-3xl md:text-4xl font-bold">FAQs</h2>
-                        <p className="text-muted-foreground mt-4 text-balance text-lg">Your questions answered</p>
-                        <p className="text-muted-foreground mt-6 hidden md:block">
-                            Can't find what you're looking for? Contact us at <a href="mailto:support@tracko.com" className="text-primary font-medium hover:underline">support@tracko.com</a>
-                        </p>
-                    </div>
-
-                    <div className="md:col-span-3">
-                        <Accordion>
-                            {faqItems.map((item) => (
-                                <AccordionItem key={item.id} value={item.id}>
-                                    <AccordionTrigger className="cursor-pointer text-base hover:no-underline text-left">
-                                        {item.question}
-                                    </AccordionTrigger>
-                                    <AccordionContent>
-                                        <p className="text-base text-muted-foreground">{item.answer}</p>
-                                    </AccordionContent>
-                                </AccordionItem>
-                            ))}
-                        </Accordion>
-                    </div>
-
-                    <p className="text-muted-foreground mt-6 md:hidden">
-                        Can't find what you're looking for? Contact us on{' '}
-                        <Link
-                            href="https://github.com"
-                            target="_blank"
-                            className="text-primary font-medium hover:underline">
-                            GitHub
-                        </Link>
+            <div className="relative mx-auto max-w-7xl px-6">
+                <div className="mx-auto max-w-2xl text-center">
+                    <h2 className="font-display text-3xl font-medium tracking-tight text-foreground sm:text-4xl">
+                        Frequently asked questions
+                    </h2>
+                    <p className="mt-4 text-lg text-muted-foreground">
+                        If you can't find what you're looking for, email our support team and if you're lucky someone will get back to you.
                     </p>
+                </div>
+
+                <div className="mx-auto mt-16 max-w-3xl">
+                    <Accordion className="w-full space-y-4">
+                        {faqItems.map((item) => (
+                            <AccordionItem key={item.id} value={item.id} className="border-b-0 rounded-2xl bg-muted/50 px-6">
+                                <AccordionTrigger className="text-base font-semibold text-foreground hover:no-underline py-4">
+                                    {item.question}
+                                </AccordionTrigger>
+                                <AccordionContent className="text-muted-foreground pb-6 text-base">
+                                    {item.answer}
+                                </AccordionContent>
+                            </AccordionItem>
+                        ))}
+                    </Accordion>
+                </div>
+                
+                <div className="mt-24 flex justify-center">
+                    <div className="flex items-center gap-2">
+                        <Image src="/logo.svg" alt="Tracko Logo" width={32} height={32} />
+                        <span className="font-bold text-xl text-foreground">Tracko</span>
+                    </div>
                 </div>
             </div>
         </section>

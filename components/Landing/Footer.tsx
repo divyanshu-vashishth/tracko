@@ -1,92 +1,34 @@
-import Image from "next/image";
 import Link from "next/link";
-import { Github, Twitter, Linkedin } from "lucide-react";
+import { Github, Twitter } from "lucide-react";
 
 export function Footer() {
   return (
-    <footer className="relative border-t bg-muted/20">
-
-      <div className="mx-auto max-w-7xl px-6 py-12 md:py-16">
-        <div className="grid grid-cols-1 md:grid-cols-4 gap-10 md:gap-8">
-          {/* Brand */}
-          <div className="md:col-span-2">
-            <Link href="/" className="flex items-center gap-2 mb-4">
-              <Image src="/logo.svg" alt="Tracko" width={32} height={32} />
-              <span className="font-bold text-xl">Tracko</span>
-            </Link>
-            <p className="max-w-xs text-sm leading-relaxed text-muted-foreground">
-              Portfolio intelligence with less noise. Track, benchmark, and act with confidence.
-            </p>
-
-            {/* Social links */}
-            <div className="flex items-center gap-3 mt-6">
-              {[
-                { icon: Twitter, href: "#", label: "Twitter" },
-                { icon: Github, href: "#", label: "GitHub" },
-                { icon: Linkedin, href: "#", label: "LinkedIn" },
-              ].map((social) => (
-                <a
-                  key={social.label}
-                  href={social.href}
-                  aria-label={social.label}
-                  className="flex items-center justify-center size-9 rounded-lg bg-muted/50 text-muted-foreground hover:bg-primary/10 hover:text-primary transition-colors duration-200"
-                >
-                  <social.icon className="size-4" />
-                </a>
-              ))}
-            </div>
-          </div>
-
-          {/* Links */}
-          <div>
-            <h4 className="font-semibold text-sm mb-4">Product</h4>
-            <ul className="space-y-3">
-              {["Features", "AI Chat", "Journal", "Documentation"].map((item) => (
-                <li key={item}>
-                  <Link
-                    href="#"
-                    className="text-sm text-muted-foreground hover:text-foreground transition-colors"
-                  >
-                    {item}
-                  </Link>
-                </li>
-              ))}
-            </ul>
-          </div>
-
-          <div>
-            <h4 className="font-semibold text-sm mb-4">Company</h4>
-            <ul className="space-y-3">
-              {["About", "Security", "Roadmap", "Contact"].map((item) => (
-                <li key={item}>
-                  <Link
-                    href="#"
-                    className="text-sm text-muted-foreground hover:text-foreground transition-colors"
-                  >
-                    {item}
-                  </Link>
-                </li>
-              ))}
-            </ul>
-          </div>
+    <footer className="bg-white border-t border-slate-100">
+      <div className="mx-auto max-w-7xl px-6 py-8 md:flex md:items-center md:justify-between">
+        <div className="flex justify-center md:order-2 space-x-6">
+          <a
+            href="https://x.com/ashdev_me"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="text-slate-400 hover:text-slate-500"
+          >
+            <span className="sr-only">X (Twitter)</span>
+            <Twitter className="h-5 w-5" aria-hidden="true" />
+          </a>
+          <a
+            href="https://github.com/divyanshu-vashishth/tracko"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="text-slate-400 hover:text-slate-500"
+          >
+            <span className="sr-only">GitHub</span>
+            <Github className="h-5 w-5" aria-hidden="true" />
+          </a>
         </div>
-
-        {/* Bottom bar */}
-        <div className="mt-12 pt-8 border-t border-border/50 flex flex-col md:flex-row justify-between items-center gap-4">
-          <p className="text-sm text-muted-foreground">
-            © {new Date().getFullYear()} Tracko. All rights reserved.
+        <div className="mt-8 md:order-1 md:mt-0">
+          <p className="text-center text-sm leading-5 text-slate-500">
+            Copyright &copy; {new Date().getFullYear()} Tracko. All rights reserved.
           </p>
-          <div className="flex items-center gap-6">
-            {["Privacy Policy", "Terms of Service"].map((item) => (
-              <Link
-                key={item}
-                href="#"
-                className="text-sm text-muted-foreground hover:text-foreground transition-colors"
-              >
-                {item}
-              </Link>
-            ))}
-          </div>
         </div>
       </div>
     </footer>
