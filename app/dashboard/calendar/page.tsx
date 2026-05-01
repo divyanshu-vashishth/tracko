@@ -19,6 +19,7 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { ChevronDown } from "lucide-react";
 import "flag-icons/css/flag-icons.min.css";
+import { usePortfolio } from "@/components/PortfolioContext";
 
 // Country codes for flag-icons
 const COUNTRY_CODES: Record<string, string> = {
@@ -205,7 +206,8 @@ function CountryFlag({ country }: { country: string }) {
 }
 
 export default function CalendarPage() {
-    const holdings = useQuery(api.portfolios.getHoldings) || [];
+    const { activePortfolioId } = usePortfolio();
+    const holdings = useQuery(api.portfolios.getHoldings, { portfolioId: activePortfolioId }) || [];
     const [showUsMarket, setShowUsMarket] = useState(false);
 
     // Economic filters

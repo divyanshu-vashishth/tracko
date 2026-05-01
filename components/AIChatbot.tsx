@@ -8,6 +8,7 @@ import { useAction, useMutation, useQuery } from "convex/react";
 import { api } from "@/convex/_generated/api";
 import { cn } from "@/lib/utils";
 import ReactMarkdown from "react-markdown";
+import { usePortfolio } from "@/components/PortfolioContext";
 
 const SUGGESTED_QUESTIONS = [
     "Analyze my portfolio performance",
@@ -33,7 +34,8 @@ function TypingIndicator() {
 }
 
 export function AIChatbot() {
-    const holdings = useQuery(api.portfolios.getHoldings);
+    const { activePortfolioId } = usePortfolio();
+    const holdings = useQuery(api.portfolios.getHoldings, { portfolioId: activePortfolioId });
     const preferences = useQuery(api.portfolios.getUserPreferences);
     const getNews = useAction(api.news.getMarketNews);
     const thread = useQuery(api.ai.getThread);

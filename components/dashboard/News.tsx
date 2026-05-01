@@ -7,6 +7,7 @@ import { Input } from "@/components/ui/input";
 import { Search, Bookmark, Clock } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { usePortfolio } from "@/components/PortfolioContext";
 
 function formatTimeAgo(dateString: string): string {
   const date = new Date(dateString);
@@ -42,8 +43,9 @@ function NewsSkeleton() {
 }
 
 export function News() {
+  const { activePortfolioId } = usePortfolio();
   const getNews = useAction(api.news.getMarketNews);
-  const holdings = useQuery(api.portfolios.getHoldings);
+  const holdings = useQuery(api.portfolios.getHoldings, { portfolioId: activePortfolioId });
   const bookmarks = useQuery(api.bookmarks.getBookmarks) || [];
   const addBookmark = useMutation(api.bookmarks.bookmarkNews);
   const removeBookmarkMutation = useMutation(api.bookmarks.removeBookmark);
@@ -165,6 +167,7 @@ export function News() {
           </Button>
 
           <div className="flex items-center gap-1 border rounded-md px-2 h-9 bg-background">
+            <span className="text-muted-foreground text-xs">Auto Refresh:</span>
             <Clock className="h-3.5 w-3.5 text-muted-foreground mr-1" />
             <Select value={refreshInterval} onValueChange={(val) => setRefreshInterval(val || "off")}>
               <SelectTrigger className="w-[85px] h-7 border-0 p-0 hover:bg-transparent shadow-none focus:ring-0 text-xs">

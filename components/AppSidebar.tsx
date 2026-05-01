@@ -3,7 +3,7 @@
 import { usePathname } from "next/navigation";
 import Link from "next/link";
 import Image from "next/image";
-import { LayoutDashboard, ChartLine, Scale, Rss, Settings, User as UserIcon, CalendarDays, BookOpen } from "lucide-react";
+import { LayoutDashboard, ChartLine, Scale, Rss, Settings, User as UserIcon, CalendarDays, BookOpen, ArrowRightLeft } from "lucide-react";
 import { useQuery } from "convex/react";
 import { api } from "@/convex/_generated/api";
 import {
@@ -25,6 +25,7 @@ const navItems = [
   { title: "Overview", href: "/dashboard", icon: LayoutDashboard },
   { title: "Analytics", href: "/dashboard/analytics", icon: ChartLine },
   { title: "Benchmarks", href: "/dashboard/benchmarks", icon: Scale },
+  { title: "Compare", href: "/dashboard/compare", icon: ArrowRightLeft },
   { title: "Calendar", href: "/dashboard/calendar", icon: CalendarDays },
   { title: "Journal", href: "/dashboard/journal", icon: BookOpen },
   { title: "News", href: "/dashboard/news", icon: Rss },

@@ -12,6 +12,7 @@ import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Checkbox } from "@/components/ui/checkbox";
 import { ScrollArea } from "@/components/ui/scroll-area";
+import { usePortfolio } from "@/components/PortfolioContext";
 
 interface Benchmark {
   symbol: string;
@@ -73,7 +74,8 @@ function getStartDate(period: TimePeriod): string {
 }
 
 export function Benchmarks() {
-  const holdings = useQuery(api.portfolios.getHoldings);
+  const { activePortfolioId } = usePortfolio();
+  const holdings = useQuery(api.portfolios.getHoldings, { portfolioId: activePortfolioId });
   const getHistory = useAction(api.stocks.getHistoricalPrices);
   const searchStocks = useAction(api.stocks.searchStocks);
 
@@ -204,15 +206,23 @@ export function Benchmarks() {
 
     return baseDates.map((date: any) => {
       const dateStr = date.toString().slice(0, 10);
+      const targetDate = new Date(date);
 
       // Portfolio Value at Date
       let currentPortfolioValue = 0;
       holdings.forEach((h: any) => {
         const stockHistory = historyData[h.symbol];
-        const dayData = stockHistory?.find((d: any) => d.date.toString().slice(0, 10) === dateStr);
-        if (dayData) {
-          currentPortfolioValue += dayData.close * h.shares;
+        let price = h.avgPurchasePrice || 0;
+        if (stockHistory && stockHistory.length > 0) {
+          let dayData = stockHistory.find((d: any) => d.date.toString().slice(0, 10) === dateStr);
+          if (!dayData) {
+            dayData = [...stockHistory].reverse().find((d: any) => new Date(d.date) <= targetDate);
+          }
+          if (dayData) {
+            price = dayData.close;
+          }
         }
+        currentPortfolioValue += price * h.shares;
       });
 
       const portfolioReturn = initialPortfolioValue > 0
@@ -227,8 +237,16 @@ export function Benchmarks() {
       // Add benchmark returns
       activeBenchmarks.forEach(b => {
         const benchmarkHistory = historyData[b.symbol];
-        const dayData = benchmarkHistory?.find((d: any) => d.date.toString().slice(0, 10) === dateStr);
-        const currentPrice = dayData?.close || 0;
+        let currentPrice = initialBenchmarkPrices[b.symbol] || 0;
+        if (benchmarkHistory && benchmarkHistory.length > 0) {
+          let dayData = benchmarkHistory.find((d: any) => d.date.toString().slice(0, 10) === dateStr);
+          if (!dayData) {
+            dayData = [...benchmarkHistory].reverse().find((d: any) => new Date(d.date) <= targetDate);
+          }
+          if (dayData) {
+            currentPrice = dayData.close;
+          }
+        }
         const initialPrice = initialBenchmarkPrices[b.symbol];
         result[b.symbol] = initialPrice > 0 ? ((currentPrice - initialPrice) / initialPrice) * 100 : 0;
       });

@@ -6,11 +6,13 @@ import { useQuery, useAction } from "convex/react";
 import { api } from "@/convex/_generated/api";
 import { useEffect, useState, useMemo } from "react";
 import { Skeleton } from "@/components/ui/skeleton";
+import { usePortfolio } from "@/components/PortfolioContext";
 
 import { formatCurrency } from "@/lib/formatCurrency";
 
 export function Analytics() {
-  const holdings = useQuery(api.portfolios.getHoldings);
+  const { activePortfolioId } = usePortfolio();
+  const holdings = useQuery(api.portfolios.getHoldings, { portfolioId: activePortfolioId });
   const getHistory = useAction(api.stocks.getHistoricalPrices);
   const [historyData, setHistoryData] = useState<Record<string, any[]>>({});
 
@@ -30,7 +32,7 @@ export function Analytics() {
 
   // 2. Process Performance Data
   const performanceData = useMemo(() => {
-    if (!holdings || Object.keys(historyData).length === 0) return [];
+    if (!holdings || holdings.length === 0 || Object.keys(historyData).length === 0) return [];
 
     // Find all unique dates (assuming all stocks have similar trading days)
     // We'll use the first symbol's dates as a baseline
@@ -39,14 +41,26 @@ export function Analytics() {
 
     return baseDates.map((date: any) => {
       let totalValue = 0;
+      const dateStr = date.toString().slice(0, 10);
+      const targetDate = new Date(date);
+      
       // For this date, sum up value of all holdings
       holdings.forEach((h: any) => {
         const stockHistory = historyData[h.symbol];
-        // Find closest date match
-        const dayData = stockHistory?.find((d: any) => d.date.toString().slice(0, 10) === date.toString().slice(0, 10));
-        if (dayData) {
-          totalValue += dayData.close * h.shares;
+        let price = h.avgPurchasePrice || 0; // fallback
+        
+        if (stockHistory && stockHistory.length > 0) {
+          // Find closest date match
+          let dayData = stockHistory.find((d: any) => d.date.toString().slice(0, 10) === dateStr);
+          if (!dayData) {
+             // Find most recent previous price if exact date is missing
+             dayData = [...stockHistory].reverse().find((d: any) => new Date(d.date) <= targetDate);
+          }
+          if (dayData) {
+            price = dayData.close;
+          }
         }
+        totalValue += price * h.shares;
       });
 
       // Simplified benchmark (e.g. just a flat growth or placeholder if we don't fetch SPY)
@@ -101,7 +115,7 @@ export function Analytics() {
   const totalReturn = startValue > 0 ? ((totalValue - startValue) / startValue) * 100 : 0;
 
   const metrics = [
-    { label: "Total Return", value: `+${totalReturn.toFixed(1)}%`, description: "Past Year" },
+    { label: "Total Return", value: `${totalReturn > 0 ? '+' : ''}${totalReturn.toFixed(1)}%`, description: "Past Year" },
     { label: "Current Value", value: formatCurrency(totalValue, portfolioCurrency), description: "Total Assets" },
     // Add more real metrics calculation here
   ];

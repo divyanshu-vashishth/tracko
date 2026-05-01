@@ -6,6 +6,8 @@ import { SidebarProvider, SidebarInset, SidebarTrigger } from "@/components/ui/s
 import { Separator } from "@/components/ui/separator";
 import { Spinner } from "@/components/ui/spinner";
 import { AIChatbot } from "@/components/AIChatbot";
+import { PortfolioProvider } from "@/components/PortfolioContext";
+import { PortfolioSelector } from "@/components/dashboard/PortfolioSelector";
 
 export default function DashboardLayout({
     children,
@@ -30,20 +32,27 @@ export default function DashboardLayout({
             </Unauthenticated>
 
             <Authenticated>
-                <SidebarProvider>
-                    <AppSidebar />
-                    <SidebarInset>
-                        <header className="flex h-16 shrink-0 items-center gap-2 border-b px-4">
-                            <SidebarTrigger className="-ml-1" />
-                            <Separator orientation="vertical" className="mr-2 h-4" />
-                            <div className="font-semibold">Dashboard</div>
-                        </header>
-                        <main className="flex-1 p-4 md:p-8">
-                            {children}
-                        </main>
-                    </SidebarInset>
-                    <AIChatbot />
-                </SidebarProvider>
+                <PortfolioProvider>
+                    <SidebarProvider>
+                        <AppSidebar />
+                        <SidebarInset>
+                            <header className="flex h-16 shrink-0 items-center gap-2 border-b px-4 justify-between">
+                                <div className="flex items-center gap-2">
+                                    <SidebarTrigger className="-ml-1" />
+                                    <Separator orientation="vertical" className="mr-2 h-4" />
+                                    <div className="font-semibold">Dashboard</div>
+                                </div>
+                                <div>
+                                    <PortfolioSelector />
+                                </div>
+                            </header>
+                            <main className="flex-1 p-4 md:p-8">
+                                {children}
+                            </main>
+                        </SidebarInset>
+                        <AIChatbot />
+                    </SidebarProvider>
+                </PortfolioProvider>
             </Authenticated>
         </>
     );

@@ -18,6 +18,7 @@ import { ScrollArea } from "@/components/ui/scroll-area";
 import { Dropzone, DropzoneEmptyState } from "@/components/kibo-ui/dropzone";
 import { Alert, AlertDescription } from "@/components/ui/alert";
 import { toast } from "sonner";
+import { usePortfolio } from "@/components/PortfolioContext";
 
 interface Holding {
   _id: Id<"holdings">;
@@ -34,7 +35,8 @@ interface Holding {
 }
 
 export function PortfolioOverview() {
-  const holdings = useQuery(api.portfolios.getHoldings) || [];
+  const { activePortfolioId } = usePortfolio();
+  const holdings = useQuery(api.portfolios.getHoldings, { portfolioId: activePortfolioId }) || [];
   const getQuotes = useAction(api.stocks.getQuotes);
   const getExchangeRates = useAction(api.exchangeRates.getExchangeRates);
   const deleteHolding = useMutation(api.portfolios.deleteHolding);
@@ -403,6 +405,7 @@ function HoldingDialog({
   mode: "add" | "edit";
   holding?: any;
 }) {
+  const { activePortfolioId } = usePortfolio();
   const addHolding = useMutation(api.portfolios.addHolding);
   const updateHolding = useMutation(api.portfolios.updateHolding);
   const searchStocks = useAction(api.stocks.searchStocks);
@@ -522,6 +525,7 @@ function HoldingDialog({
           price: Number(price),
           currency,
           sector,
+          portfolioId: activePortfolioId,
         });
         toast.success("Holding added successfully");
       } else {
@@ -707,6 +711,7 @@ function ImportDialog({
   open: boolean;
   onOpenChange: (open: boolean) => void;
 }) {
+  const { activePortfolioId } = usePortfolio();
   const parseScreenshot = useAction(api.portfolioImport.parsePortfolioScreenshot);
   const resolveSymbol = useAction(api.stocks.resolveSymbol);
   const addHolding = useMutation(api.portfolios.addHolding);
@@ -804,6 +809,7 @@ function ImportDialog({
             shares: holding.quantity,
             price: holding.avgPrice,
             currency: holding.currency,
+            portfolioId: activePortfolioId,
           });
           savedCount++;
         }
@@ -1004,7 +1010,9 @@ function CsvImportDialog({
   open: boolean;
   onOpenChange: (open: boolean) => void;
 }) {
+  const { activePortfolioId } = usePortfolio();
   const addHolding = useMutation(api.portfolios.addHolding);
+  const resolveSymbol = useAction(api.stocks.resolveSymbol);
 
   const [csvContent, setCsvContent] = useState("");
   const [parsedHoldings, setParsedHoldings] = useState<ParsedHolding[]>([]);
@@ -1111,6 +1119,7 @@ function CsvImportDialog({
             shares: holding.quantity,
             price: holding.avgPrice,
             currency: holding.currency,
+            portfolioId: activePortfolioId,
           });
           savedCount++;
         }

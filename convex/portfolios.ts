@@ -2,11 +2,102 @@ import { query, mutation } from "./_generated/server";
 import { v } from "convex/values";
 import { getAuthUserId } from "@convex-dev/auth/server";
 
-export const getHoldings = query({
+export const getPortfolios = query({
   args: {},
   handler: async (ctx) => {
     const userId = await getAuthUserId(ctx);
     if (!userId) return [];
+    return await ctx.db
+      .query("portfolios")
+      .withIndex("by_user", (q) => q.eq("userId", userId))
+      .collect();
+  },
+});
+
+export const createPortfolio = mutation({
+  args: { name: v.string() },
+  handler: async (ctx, args) => {
+    const userId = await getAuthUserId(ctx);
+    if (!userId) throw new Error("Not authenticated");
+
+    const existingPortfolios = await ctx.db
+      .query("portfolios")
+      .withIndex("by_user", (q) => q.eq("userId", userId))
+      .collect();
+
+    if (existingPortfolios.length >= 2) {
+      throw new Error("Maximum of 2 portfolios allowed per user currently.");
+    }
+
+    const portfolioId = await ctx.db.insert("portfolios", {
+      userId,
+      name: args.name,
+      createdAt: Date.now(),
+      updatedAt: Date.now(),
+    });
+    return portfolioId;
+  },
+});
+
+export const updatePortfolio = mutation({
+  args: { id: v.id("portfolios"), name: v.string() },
+  handler: async (ctx, args) => {
+    const userId = await getAuthUserId(ctx);
+    if (!userId) throw new Error("Not authenticated");
+
+    const portfolio = await ctx.db.get(args.id);
+    if (!portfolio || portfolio.userId !== userId) throw new Error("Unauthorized");
+
+    await ctx.db.patch(args.id, { name: args.name, updatedAt: Date.now() });
+  },
+});
+
+export const deletePortfolio = mutation({
+  args: { id: v.id("portfolios") },
+  handler: async (ctx, args) => {
+    const userId = await getAuthUserId(ctx);
+    if (!userId) throw new Error("Not authenticated");
+
+    const portfolio = await ctx.db.get(args.id);
+    if (!portfolio || portfolio.userId !== userId) throw new Error("Unauthorized");
+
+    // Delete associated holdings
+    const holdings = await ctx.db
+      .query("holdings")
+      .withIndex("by_portfolio", (q) => q.eq("portfolioId", args.id))
+      .collect();
+    for (const h of holdings) {
+      await ctx.db.delete(h._id);
+    }
+
+    // Delete associated transactions
+    const transactions = await ctx.db
+      .query("transactions")
+      .withIndex("by_portfolio", (q) => q.eq("portfolioId", args.id))
+      .collect();
+    for (const t of transactions) {
+      await ctx.db.delete(t._id);
+    }
+
+    await ctx.db.delete(args.id);
+  },
+});
+
+export const getHoldings = query({
+  args: {
+    portfolioId: v.optional(v.id("portfolios")),
+  },
+  handler: async (ctx, args) => {
+    const userId = await getAuthUserId(ctx);
+    if (!userId) return [];
+
+    if (args.portfolioId) {
+      const pId = args.portfolioId;
+      return await ctx.db
+        .query("holdings")
+        .withIndex("by_portfolio", (q) => q.eq("portfolioId", pId))
+        .collect();
+    }
 
     const holdings = await ctx.db
       .query("holdings")
@@ -18,8 +109,10 @@ export const getHoldings = query({
 });
 
 export const getPortfolioSummary = query({
-  args: {},
-  handler: async (ctx) => {
+  args: {
+    portfolioId: v.optional(v.id("portfolios")),
+  },
+  handler: async (ctx, args) => {
     const userId = await getAuthUserId(ctx);
     if (!userId) {
       return {
@@ -30,10 +123,19 @@ export const getPortfolioSummary = query({
       };
     }
 
-    const holdings = await ctx.db
-      .query("holdings")
-      .withIndex("by_user", (q) => q.eq("userId", userId))
-      .collect();
+    let holdings = [];
+    if (args.portfolioId) {
+      const pId = args.portfolioId;
+      holdings = await ctx.db
+        .query("holdings")
+        .withIndex("by_portfolio", (q) => q.eq("portfolioId", pId))
+        .collect();
+    } else {
+      holdings = await ctx.db
+        .query("holdings")
+        .withIndex("by_user", (q) => q.eq("userId", userId))
+        .collect();
+    }
 
     const totalValue = holdings.reduce((sum, h) => sum + (h.totalValue || 0), 0);
     const totalCost = holdings.reduce((sum, h) => sum + (h.shares * h.avgPurchasePrice), 0);
@@ -58,32 +160,38 @@ export const addHolding = mutation({
     price: v.number(),
     sector: v.optional(v.string()),
     currency: v.optional(v.string()),
+    portfolioId: v.optional(v.id("portfolios")),
   },
   handler: async (ctx, args) => {
     const userId = await getAuthUserId(ctx);
     if (!userId) throw new Error("Not authenticated");
 
-    let portfolio = await ctx.db
-      .query("portfolios")
-      .withIndex("by_user", (q) => q.eq("userId", userId))
-      .first();
+    let portfolioId = args.portfolioId;
 
-    if (!portfolio) {
-      const portfolioId = await ctx.db.insert("portfolios", {
-        userId,
-        name: "My Portfolio",
-        createdAt: Date.now(),
-        updatedAt: Date.now(),
-      });
-      portfolio = await ctx.db.get(portfolioId);
+    if (!portfolioId) {
+      let portfolio = await ctx.db
+        .query("portfolios")
+        .withIndex("by_user", (q) => q.eq("userId", userId))
+        .first();
+
+      if (!portfolio) {
+        portfolioId = await ctx.db.insert("portfolios", {
+          userId,
+          name: "My Portfolio",
+          createdAt: Date.now(),
+          updatedAt: Date.now(),
+        });
+      } else {
+        portfolioId = portfolio._id;
+      }
     }
 
-    if (!portfolio) throw new Error("Failed to create portfolio");
+    if (!portfolioId) throw new Error("Failed to resolve portfolio");
 
-    // Check if holding exists
+    // Check if holding exists in the SPECIFIC portfolio
     const existingHolding = await ctx.db
       .query("holdings")
-      .withIndex("by_user", (q) => q.eq("userId", userId))
+      .withIndex("by_portfolio", (q) => q.eq("portfolioId", portfolioId!))
       .filter((q) => q.eq(q.field("symbol"), args.symbol))
       .first();
 
@@ -102,7 +210,7 @@ export const addHolding = mutation({
     } else {
       await ctx.db.insert("holdings", {
         userId,
-        portfolioId: portfolio._id,
+        portfolioId,
         symbol: args.symbol,
         name: args.name,
         shares: args.shares,
