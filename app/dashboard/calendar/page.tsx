@@ -42,43 +42,28 @@ interface EconomicEvent {
 }
 
 const ECONOMIC_EVENTS: EconomicEvent[] = [
-    // January 2026
-    { date: new Date(2026, 0, 8, 19, 0), country: "USA", event: "Initial Jobless Claims JAN/03", impact: "Medium", expected: "205K", previous: "199K" },
-    { date: new Date(2026, 0, 9, 19, 0), country: "USA", event: "Housing Starts OCT", impact: "Medium" },
-    { date: new Date(2026, 0, 9, 19, 0), country: "USA", event: "Housing Starts SEP", impact: "Medium", actual: "1.31M", previous: "1.307M" },
-    { date: new Date(2026, 0, 9, 19, 0), country: "USA", event: "Non Farm Payrolls DEC", impact: "High", expected: "57K", previous: "64K" },
-    { date: new Date(2026, 0, 12, 16, 0), country: "India", event: "Inflation Rate YoY DEC", impact: "High", previous: "0.71%" },
-    { date: new Date(2026, 0, 13, 19, 0), country: "USA", event: "Inflation Rate YoY DEC", impact: "High", previous: "2.70%" },
-    { date: new Date(2026, 0, 13, 20, 30), country: "USA", event: "New Home Sales OCT", impact: "Medium" },
-    { date: new Date(2026, 0, 13, 20, 30), country: "USA", event: "New Home Sales SEP", impact: "Medium", actual: "0.71M", previous: "0.8M" },
-    { date: new Date(2026, 0, 14, 19, 0), country: "USA", event: "Retail Sales YoY NOV", impact: "Medium", previous: "4.00%" },
-    { date: new Date(2026, 0, 14, 20, 30), country: "USA", event: "Existing Home Sales DEC", impact: "Medium", previous: "4.13M" },
-    { date: new Date(2026, 0, 16, 19, 45), country: "USA", event: "Industrial Production YoY DEC", impact: "Low", previous: "2.50%" },
-    { date: new Date(2026, 0, 19, 7, 30), country: "China", event: "GDP Growth Rate YoY Q4", impact: "High", previous: "4.80%" },
-    { date: new Date(2026, 0, 19, 7, 30), country: "China", event: "Industrial Production YoY DEC", impact: "Medium", previous: "4.80%" },
-    { date: new Date(2026, 0, 19, 7, 30), country: "China", event: "Retail Sales YoY DEC", impact: "Medium", previous: "1.30%" },
-    { date: new Date(2026, 0, 21, 19, 0), country: "USA", event: "Housing Starts DEC", impact: "Medium" },
-    { date: new Date(2026, 0, 23, 15, 0), country: "Japan", event: "BoJ Interest Rate Decision", impact: "High", previous: "0.25%" },
-    { date: new Date(2026, 0, 27, 10, 30), country: "India", event: "RBI MPC Minutes", impact: "High" },
-    { date: new Date(2026, 0, 29, 19, 0), country: "USA", event: "Fed Interest Rate Decision", impact: "High", previous: "4.50%" },
-    { date: new Date(2026, 0, 30, 10, 0), country: "Euro Area", event: "ECB Interest Rate Decision", impact: "High", previous: "2.75%" },
-    { date: new Date(2026, 0, 30, 19, 0), country: "USA", event: "GDP Growth Rate Q4", impact: "High", previous: "2.80%" },
-    // February 2026
-    { date: new Date(2026, 1, 3, 10, 0), country: "India", event: "Union Budget 2026-27", impact: "High" },
-    { date: new Date(2026, 1, 6, 19, 0), country: "USA", event: "Non Farm Payrolls JAN", impact: "High" },
-    { date: new Date(2026, 1, 10, 15, 0), country: "India", event: "RBI Policy Decision", impact: "High", previous: "6.50%" },
-    { date: new Date(2026, 1, 12, 19, 0), country: "USA", event: "Inflation Rate YoY JAN", impact: "High" },
-    { date: new Date(2026, 1, 16, 7, 30), country: "Japan", event: "GDP Growth Rate Q4", impact: "High" },
-    { date: new Date(2026, 1, 18, 7, 30), country: "China", event: "Industrial Production YoY JAN", impact: "Medium" },
-    { date: new Date(2026, 1, 25, 19, 0), country: "USA", event: "Consumer Confidence FEB", impact: "Medium" },
-    { date: new Date(2026, 1, 28, 14, 0), country: "India", event: "GDP Growth Rate Q3", impact: "High" },
-    // March 2026
-    { date: new Date(2026, 2, 6, 19, 0), country: "USA", event: "Non Farm Payrolls FEB", impact: "High" },
-    { date: new Date(2026, 2, 10, 19, 0), country: "USA", event: "Inflation Rate YoY FEB", impact: "High" },
-    { date: new Date(2026, 2, 12, 10, 0), country: "Euro Area", event: "ECB Interest Rate Decision", impact: "High" },
-    { date: new Date(2026, 2, 18, 18, 0), country: "USA", event: "Fed Interest Rate Decision", impact: "High" },
-    { date: new Date(2026, 2, 19, 15, 0), country: "Japan", event: "BoJ Interest Rate Decision", impact: "High" },
-    { date: new Date(2026, 2, 31, 10, 30), country: "India", event: "RBI MPC Minutes", impact: "Medium" },
+    // May 2026
+    { date: new Date(2026, 4, 14, 12, 0), country: "India", event: "WPI Inflation YoY APR", impact: "Medium", expected: "4.40%", actual: "8.30%", previous: "3.88%" },
+    { date: new Date(2026, 4, 14, 18, 0), country: "USA", event: "Initial Jobless Claims MAY/09", impact: "Medium", expected: "205K", actual: "211K", previous: "200K" },
+    { date: new Date(2026, 4, 14, 18, 0), country: "USA", event: "Retail Sales YoY APR", impact: "Medium", expected: "4.90%", previous: "4.60%" },
+    { date: new Date(2026, 4, 15, 18, 45), country: "USA", event: "Industrial Production YoY APR", impact: "Low", previous: "0.70%" },
+    { date: new Date(2026, 4, 18, 7, 30), country: "China", event: "Industrial Production YoY APR", impact: "Medium", previous: "5.70%" },
+    { date: new Date(2026, 4, 20, 23, 30), country: "USA", event: "FOMC Minutes", impact: "High" },
+    { date: new Date(2026, 4, 21, 18, 0), country: "USA", event: "Housing Starts APR", impact: "Medium", previous: "1.502M" },
+    { date: new Date(2026, 4, 21, 18, 0), country: "USA", event: "Initial Jobless Claims MAY/16", impact: "Medium" },
+    { date: new Date(2026, 4, 28, 0, 0), country: "India", event: "Market Holiday - Bakri Eid", impact: "Low" },
+    { date: new Date(2026, 4, 28, 16, 0), country: "India", event: "Industrial Production YoY APR", impact: "Medium", previous: "4.1%" },
+    { date: new Date(2026, 4, 28, 19, 30), country: "USA", event: "New Home Sales APR", impact: "Medium", previous: "0.682M" },
+    { date: new Date(2026, 4, 28, 18, 0), country: "USA", event: "Initial Jobless Claims MAY/23", impact: "Medium" },
+    { date: new Date(2026, 4, 29, 16, 0), country: "India", event: "GDP Growth Rate YoY Q1", impact: "High", previous: "7.80%" },
+    { date: new Date(2026, 4, 31, 7, 0), country: "China", event: "NBS Manufacturing PMI MAY", impact: "Low", previous: "50.3" },
+    // June 2026
+    { date: new Date(2026, 5, 4, 18, 0), country: "USA", event: "Non Farm Payrolls MAY", impact: "High" },
+    { date: new Date(2026, 5, 5, 16, 0), country: "India", event: "RBI Policy Decision", impact: "High", previous: "6.00%" },
+    { date: new Date(2026, 5, 10, 18, 0), country: "USA", event: "Inflation Rate YoY MAY", impact: "High" },
+    { date: new Date(2026, 5, 17, 18, 0), country: "USA", event: "Fed Interest Rate Decision", impact: "High", previous: "4.50%" },
+    { date: new Date(2026, 5, 18, 10, 0), country: "Euro Area", event: "ECB Interest Rate Decision", impact: "High" },
+    { date: new Date(2026, 5, 26, 0, 0), country: "India", event: "Market Holiday - Muharram", impact: "Low" },
 ];
 
 // Stock Results Data
@@ -86,57 +71,50 @@ interface StockResult {
     date: Date;
     symbol: string;
     name: string;
-    eventType: "Stock Results (Q3)" | "Split" | "Dividend";
+    eventType: "Stock Results (Q4)" | "Split" | "Dividend";
     price: number;
     change: number;
     quarter?: string;
     splitRatio?: string;
+    details?: string;
 }
 
 const STOCK_RESULTS: StockResult[] = [
-    { date: new Date(2026, 0, 2), symbol: "MCX", name: "Multi Commodity Exchange of India Ltd.", eventType: "Split", price: 2201.00, change: -0.7, splitRatio: "1:5" },
-    { date: new Date(2026, 0, 10), symbol: "DMART", name: "Avenue Supermarts Ltd.", eventType: "Stock Results (Q3)", price: 3654.80, change: -1.7, quarter: "Q3 2026" },
-    { date: new Date(2026, 0, 12), symbol: "HCLTECH", name: "HCL Technologies Ltd.", eventType: "Stock Results (Q3)", price: 1609.40, change: -1.9, quarter: "Q3 2026" },
-    { date: new Date(2026, 0, 12), symbol: "TCS", name: "Tata Consultancy Services Ltd.", eventType: "Stock Results (Q3)", price: 3222.80, change: -0.9, quarter: "Q3 2026" },
-    { date: new Date(2026, 0, 13), symbol: "ICICIGI", name: "ICICI Lombard General Insurance Co. Ltd.", eventType: "Stock Results (Q3)", price: 1977.40, change: 0.2, quarter: "Q3 2026" },
-    { date: new Date(2026, 0, 13), symbol: "ICICIPRULI", name: "ICICI Prudential Life Insurance Co. Ltd.", eventType: "Stock Results (Q3)", price: 682.85, change: 0.7, quarter: "Q3 2026" },
-    { date: new Date(2026, 0, 14), symbol: "INFY", name: "Infosys Ltd.", eventType: "Stock Results (Q3)", price: 1608.20, change: -2.0, quarter: "Q3 2026" },
-    { date: new Date(2026, 0, 14), symbol: "HDFCAMC", name: "HDFC Asset Management Co. Ltd.", eventType: "Stock Results (Q3)", price: 2662.60, change: 0.2, quarter: "Q3 2026" },
-    { date: new Date(2026, 0, 14), symbol: "KOTAKBANK", name: "Kotak Mahindra Bank Ltd.", eventType: "Split", price: 2190.90, change: -0.2, splitRatio: "1:5" },
-    { date: new Date(2026, 0, 15), symbol: "ANGELONE", name: "Angel One Ltd.", eventType: "Stock Results (Q3)", price: 2395.20, change: 0.3, quarter: "Q3 2026" },
-    { date: new Date(2026, 0, 15), symbol: "HDFCLIFE", name: "HDFC Life Insurance Co. Ltd.", eventType: "Stock Results (Q3)", price: 759.55, change: 0.6, quarter: "Q3 2026" },
-    { date: new Date(2026, 0, 16), symbol: "TECHM", name: "Tech Mahindra Ltd.", eventType: "Stock Results (Q3)", price: 1601.30, change: -0.7, quarter: "Q3 2026" },
-    { date: new Date(2026, 0, 16), symbol: "TATATECH", name: "Tata Technologies Ltd.", eventType: "Stock Results (Q3)", price: 652.70, change: -0.5, quarter: "Q3 2026" },
-    { date: new Date(2026, 0, 16), symbol: "FEDERALBNK", name: "The Federal Bank Ltd.", eventType: "Stock Results (Q3)", price: 263.65, change: -1.2, quarter: "Q3 2026" },
-    { date: new Date(2026, 0, 16), symbol: "POLYCAB", name: "Polycab India Ltd.", eventType: "Stock Results (Q3)", price: 7758.00, change: -0.5, quarter: "Q3 2026" },
-    { date: new Date(2026, 0, 17), symbol: "ICICIBANK", name: "ICICI Bank Ltd.", eventType: "Stock Results (Q3)", price: 1372.50, change: 1.3, quarter: "Q3 2026" },
-    { date: new Date(2026, 0, 17), symbol: "HDFCBANK", name: "HDFC Bank Ltd.", eventType: "Stock Results (Q3)", price: 978.65, change: -2.3, quarter: "Q3 2026" },
-    { date: new Date(2026, 0, 17), symbol: "YESBANK", name: "Yes Bank Ltd.", eventType: "Stock Results (Q3)", price: 22.84, change: 2.5, quarter: "Q3 2026" },
-    { date: new Date(2026, 0, 20), symbol: "PERSISTENT", name: "Persistent Systems Ltd.", eventType: "Stock Results (Q3)", price: 6210.50, change: -1.3, quarter: "Q3 2026" },
-    { date: new Date(2026, 0, 21), symbol: "DRREDDY", name: "Dr. Reddy's Laboratories Ltd.", eventType: "Stock Results (Q3)", price: 1250.80, change: -0.4, quarter: "Q3 2026" },
-    { date: new Date(2026, 0, 22), symbol: "COFORGE", name: "Coforge Ltd.", eventType: "Stock Results (Q3)", price: 1642.00, change: -0.5, quarter: "Q3 2026" },
-    { date: new Date(2026, 0, 22), symbol: "MPHASIS", name: "Mphasis Ltd.", eventType: "Stock Results (Q3)", price: 2802.00, change: -0.2, quarter: "Q3 2026" },
-    { date: new Date(2026, 0, 22), symbol: "CAMS", name: "Computer Age Management Services Ltd.", eventType: "Stock Results (Q3)", price: 751.90, change: -0.6, quarter: "Q3 2026" },
-    { date: new Date(2026, 0, 23), symbol: "JSWSTEEL", name: "JSW Steel Ltd.", eventType: "Stock Results (Q3)", price: 1186.70, change: 0.5, quarter: "Q3 2026" },
-    { date: new Date(2026, 0, 23), symbol: "CIPLA", name: "Cipla Ltd.", eventType: "Stock Results (Q3)", price: 1520.50, change: 0.6, quarter: "Q3 2026" },
-    { date: new Date(2026, 0, 23), symbol: "GODREJCP", name: "Godrej Consumer Products Ltd.", eventType: "Stock Results (Q3)", price: 1240.20, change: 0.4, quarter: "Q3 2026" },
-    { date: new Date(2026, 0, 23), symbol: "ADANIGREEN", name: "Adani Green Energy Ltd.", eventType: "Stock Results (Q3)", price: 1032.40, change: -0.6, quarter: "Q3 2026" },
-    { date: new Date(2026, 0, 24), symbol: "ULTRACEMCO", name: "UltraTech Cement Ltd.", eventType: "Stock Results (Q3)", price: 12071.00, change: 1.4, quarter: "Q3 2026" },
-    { date: new Date(2026, 0, 27), symbol: "ASIANPAINT", name: "Asian Paints Ltd.", eventType: "Stock Results (Q3)", price: 2819.40, change: 1.7, quarter: "Q3 2026" },
-    { date: new Date(2026, 0, 29), symbol: "DABUR", name: "Dabur India Ltd.", eventType: "Stock Results (Q3)", price: 521.45, change: -0.2, quarter: "Q3 2026" },
-    { date: new Date(2026, 0, 29), symbol: "BLUESTARCO", name: "Blue Star Ltd.", eventType: "Stock Results (Q3)", price: 1855.00, change: 2.1, quarter: "Q3 2026" },
-    { date: new Date(2026, 0, 30), symbol: "NESTLEIND", name: "Nestle India Ltd.", eventType: "Stock Results (Q3)", price: 1315.00, change: 2.8, quarter: "Q3 2026" },
-    { date: new Date(2026, 0, 30), symbol: "EXIDEIND", name: "Exide Industries Ltd.", eventType: "Stock Results (Q3)", price: 366.80, change: -0.2, quarter: "Q3 2026" },
-    { date: new Date(2026, 0, 30), symbol: "CHOLAFIN", name: "Cholamandalam Inv. & Fin. Co. Ltd.", eventType: "Stock Results (Q3)", price: 1769.60, change: -0.6, quarter: "Q3 2026" },
-    { date: new Date(2026, 0, 31), symbol: "IDFCFIRSTB", name: "IDFC First Bank Ltd.", eventType: "Stock Results (Q3)", price: 84.98, change: -1.1, quarter: "Q3 2026" },
-    { date: new Date(2026, 1, 4), symbol: "NHPC", name: "NHPC Ltd.", eventType: "Stock Results (Q3)", price: 83.68, change: 0.1, quarter: "Q3 2026" },
-    { date: new Date(2026, 1, 6), symbol: "BOSCHLTD", name: "Bosch Ltd.", eventType: "Stock Results (Q3)", price: 39180.00, change: -0.6, quarter: "Q3 2026" },
-    { date: new Date(2026, 1, 6), symbol: "SHREECEM", name: "Shree Cement Ltd.", eventType: "Stock Results (Q3)", price: 27615.00, change: 2.1, quarter: "Q3 2026" },
-    { date: new Date(2026, 1, 11), symbol: "M&M", name: "Mahindra & Mahindra Ltd.", eventType: "Stock Results (Q3)", price: 3804.80, change: 0.1, quarter: "Q3 2026" },
-    { date: new Date(2026, 1, 11), symbol: "MFSL", name: "Max Financial Services Ltd.", eventType: "Stock Results (Q3)", price: 1706.70, change: 2.1, quarter: "Q3 2026" },
-    { date: new Date(2026, 1, 12), symbol: "HINDALCO", name: "Hindalco Industries Ltd.", eventType: "Stock Results (Q3)", price: 932.10, change: 0.7, quarter: "Q3 2026" },
-    { date: new Date(2026, 1, 13), symbol: "KFINTECH", name: "Kfin Technologies Ltd.", eventType: "Stock Results (Q3)", price: 1087.50, change: 0.5, quarter: "Q3 2026" },
-    { date: new Date(2026, 1, 19), symbol: "ABB", name: "ABB India Ltd.", eventType: "Stock Results (Q3)", price: 5168.50, change: -0.7, quarter: "Q3 2026" },
+    // 13th May, Wednesday
+    { date: new Date(2026, 4, 13), symbol: "CIPLA", name: "Cipla Ltd.", eventType: "Stock Results (Q4)", price: 1436.70, change: 0.0, quarter: "Q4 2026" },
+    { date: new Date(2026, 4, 13), symbol: "CROMPTON", name: "Crompton Greaves Consumer Electricals Ltd.", eventType: "Stock Results (Q4)", price: 288.95, change: 0.0, quarter: "Q4 2026" },
+    { date: new Date(2026, 4, 13), symbol: "TIINDIA", name: "Tube Investments of India Ltd.", eventType: "Stock Results (Q4)", price: 2800.80, change: 0.0, quarter: "Q4 2026" },
+    { date: new Date(2026, 4, 13), symbol: "BHARTIARTL", name: "Bharti Airtel Ltd.", eventType: "Stock Results (Q4)", price: 1883.50, change: 0.0, quarter: "Q4 2026" },
+    { date: new Date(2026, 4, 13), symbol: "LICHSGFIN", name: "LIC Housing Fin. Ltd.", eventType: "Stock Results (Q4)", price: 560.40, change: 0.0, quarter: "Q4 2026" },
+    { date: new Date(2026, 4, 13), symbol: "TVSMOTOR", name: "TVS Motor Co. Ltd.", eventType: "Stock Results (Q4)", price: 3460.80, change: 0.0, quarter: "Q4 2026" },
+    { date: new Date(2026, 4, 13), symbol: "KAYNES", name: "Kaynes Technology India Ltd.", eventType: "Stock Results (Q4)", price: 3336.50, change: 0.0, quarter: "Q4 2026" },
+    { date: new Date(2026, 4, 13), symbol: "PFC", name: "Power Fin. Corp. Ltd.", eventType: "Stock Results (Q4)", price: 451.45, change: 0.0, quarter: "Q4 2026" },
+    { date: new Date(2026, 4, 13), symbol: "OIL", name: "Oil India Ltd.", eventType: "Stock Results (Q4)", price: 517.55, change: 0.0, quarter: "Q4 2026" },
+    { date: new Date(2026, 4, 13), symbol: "HINDPETRO", name: "Hindustan Petroleum Corp. Ltd.", eventType: "Stock Results (Q4)", price: 377.55, change: 0.0, quarter: "Q4 2026" },
+    { date: new Date(2026, 4, 13), symbol: "DLF", name: "DLF Ltd.", eventType: "Stock Results (Q4)", price: 583.25, change: 0.0, quarter: "Q4 2026" },
+    { date: new Date(2026, 4, 13), symbol: "JSWSTEEL", name: "JSW Steel Ltd.", eventType: "Stock Results (Q4)", price: 1296.90, change: 0.0, quarter: "Q4 2026" },
+    { date: new Date(2026, 4, 13), symbol: "TMPV", name: "Tata Motors Passenger Vehicles Ltd.", eventType: "Stock Results (Q4)", price: 338.75, change: 0.0, quarter: "Q4 2026" },
+    { date: new Date(2026, 4, 13), symbol: "HAL", name: "Hindustan Aeronautics Ltd.", eventType: "Stock Results (Q4)", price: 4608.00, change: 0.0, quarter: "Q4 2026" },
+    { date: new Date(2026, 4, 13), symbol: "UNITDSPR", name: "United Spirits Ltd.", eventType: "Stock Results (Q4)", price: 1272.50, change: 0.0, quarter: "Q4 2026" },
+    // 14th May, Thursday
+    { date: new Date(2026, 4, 14), symbol: "IRFC", name: "Indian Railway Finance Corp. Ltd.", eventType: "Stock Results (Q4)", price: 100.19, change: 0.0, quarter: "Q4 2026" },
+    { date: new Date(2026, 4, 14), symbol: "VOLTAS", name: "Voltas Ltd.", eventType: "Stock Results (Q4)", price: 1293.50, change: 0.0, quarter: "Q4 2026" },
+    { date: new Date(2026, 4, 14), symbol: "VMM", name: "Vishal Mega Mart Ltd.", eventType: "Stock Results (Q4)", price: 117.78, change: 0.0, quarter: "Q4 2026" },
+    { date: new Date(2026, 4, 14), symbol: "MUTHOOTFIN", name: "Muthoot Fin. Ltd.", eventType: "Stock Results (Q4)", price: 3531.10, change: 0.0, quarter: "Q4 2026" },
+    { date: new Date(2026, 4, 14), symbol: "OBEROIRLTY", name: "Oberoi Realty Ltd.", eventType: "Dividend", price: 1637.60, change: 0.0, details: "Interim Dividend of ₹ 2 Per Share" },
+    { date: new Date(2026, 4, 14), symbol: "IEX", name: "Indian Energy Exchange Ltd.", eventType: "Dividend", price: 128.44, change: 0.0, details: "Dividend of ₹ 2 Per Share" },
+    // 15th May, Friday
+    { date: new Date(2026, 4, 15), symbol: "PREMIERENE", name: "Premier Energies Ltd.", eventType: "Stock Results (Q4)", price: 977.40, change: 0.0, quarter: "Q4 2026" },
+    { date: new Date(2026, 4, 15), symbol: "TATASTEEL", name: "Tata Steel Ltd.", eventType: "Stock Results (Q4)", price: 221.13, change: 0.0, quarter: "Q4 2026" },
+    { date: new Date(2026, 4, 15), symbol: "SOLARINDS", name: "Solar Industries India Ltd.", eventType: "Stock Results (Q4)", price: 16665.00, change: 0.0, quarter: "Q4 2026" },
+    { date: new Date(2026, 4, 15), symbol: "COCHINSHIP", name: "Cochin Shipyard Ltd.", eventType: "Stock Results (Q4)", price: 1645.20, change: 0.0, quarter: "Q4 2026" },
+    { date: new Date(2026, 4, 15), symbol: "GODFRYPHLP", name: "Godfrey Phillips India Ltd.", eventType: "Stock Results (Q4)", price: 2458.60, change: 0.0, quarter: "Q4 2026" },
+    { date: new Date(2026, 4, 15), symbol: "SAIL", name: "Steel Authority of India Ltd.", eventType: "Stock Results (Q4)", price: 199.08, change: 0.0, quarter: "Q4 2026" },
+    { date: new Date(2026, 4, 15), symbol: "NHPC", name: "NHPC Ltd.", eventType: "Stock Results (Q4)", price: 78.45, change: 0.0, quarter: "Q4 2026" },
+    { date: new Date(2026, 4, 15), symbol: "POWERGRID", name: "Power Grid Corp. of India Ltd.", eventType: "Stock Results (Q4)", price: 301.75, change: 0.0, quarter: "Q4 2026" },
+    { date: new Date(2026, 4, 15), symbol: "AMBER", name: "Amber Enterprises India Ltd.", eventType: "Stock Results (Q4)", price: 8288.50, change: 0.0, quarter: "Q4 2026" },
+    { date: new Date(2026, 4, 15), symbol: "SBIN", name: "State Bank of India", eventType: "Dividend", price: 979.90, change: 0.0, details: "Dividend of ₹ 17.35 Per Share" },
+    { date: new Date(2026, 4, 15), symbol: "NUVAMA", name: "Nuvama Wealth Management Ltd.", eventType: "Dividend", price: 1477.90, change: 0.0, details: "Interim Dividend of ₹ 14 Per Share" },
 ];
 
 // Indian Market Holidays
@@ -419,7 +397,7 @@ export default function CalendarPage() {
                                             </div>
                                         </TableCell>
                                         <TableCell>
-                                            <Badge variant="outline" className="bg-primary/10 text-primary border-primary/30">
+                                            <Badge variant="outline" className={result.eventType === "Dividend" ? "bg-purple-100 text-purple-700 border-purple-300" : "bg-primary/10 text-primary border-primary/30"}>
                                                 {result.eventType}
                                             </Badge>
                                         </TableCell>
@@ -430,7 +408,7 @@ export default function CalendarPage() {
                                             </span>
                                         </TableCell>
                                         <TableCell className="text-muted-foreground">
-                                            {result.quarter || result.splitRatio}
+                                            {result.details || result.quarter || result.splitRatio}
                                         </TableCell>
                                     </TableRow>
                                 ))}

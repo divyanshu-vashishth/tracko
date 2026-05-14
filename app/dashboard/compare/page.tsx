@@ -188,8 +188,9 @@ export default function ComparePage() {
                     <XAxis dataKey="name" axisLine={false} tickLine={false} />
                     <YAxis axisLine={false} tickLine={false} tickFormatter={(value) => `₹${(value / 1000).toFixed(0)}k`} />
                     <Tooltip 
-                      cursor={{ fill: 'hsl(var(--muted))' }}
-                      contentStyle={{ backgroundColor: 'hsl(var(--card))', border: '1px solid hsl(var(--border))' }}
+                      cursor={{ fill: 'rgba(148, 163, 184, 0.15)' }}
+                      contentStyle={{ backgroundColor: '#ffffff', border: '1px solid #e5e7eb', borderRadius: '8px', color: '#1f2937' }}
+                      labelStyle={{ color: '#374151' }}
                       formatter={(value: number) => formatCurrency(value, "INR")}
                     />
                     <Legend />
@@ -211,8 +212,9 @@ export default function ComparePage() {
                     <XAxis dataKey="name" axisLine={false} tickLine={false} />
                     <YAxis axisLine={false} tickLine={false} tickFormatter={(value) => `${value}%`} />
                     <Tooltip 
-                      cursor={{ fill: 'hsl(var(--muted))' }}
-                      contentStyle={{ backgroundColor: 'hsl(var(--card))', border: '1px solid hsl(var(--border))' }}
+                      cursor={{ fill: 'rgba(148, 163, 184, 0.15)' }}
+                      contentStyle={{ backgroundColor: '#ffffff', border: '1px solid #e5e7eb', borderRadius: '8px', color: '#1f2937' }}
+                      labelStyle={{ color: '#374151' }}
                       formatter={(value: number) => `${value.toFixed(2)}%`}
                     />
                     <Bar dataKey="gainPercent" name="Return %" radius={[4, 4, 0, 0]}>
@@ -251,7 +253,7 @@ export default function ComparePage() {
                             ))}
                           </Pie>
                           <Tooltip 
-                            contentStyle={{ backgroundColor: 'hsl(var(--card))', border: '1px solid hsl(var(--border))' }}
+                            contentStyle={{ backgroundColor: '#ffffff', border: '1px solid #e5e7eb', borderRadius: '8px', color: '#1f2937' }}
                             formatter={(value: number) => formatCurrency(value, "INR")}
                           />
                         </PieChart>
